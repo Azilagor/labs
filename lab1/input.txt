@@ -1,0 +1,13 @@
+nfs://server1/folder
+nfs://ServerTwo/myFolder/SubDir/FileName
+nfs://main/catalog1/sub1/sub2
+nfs://alpha/
+nfs://beta123/folder  ; неправильный — цифры
+nfs://gamma/folder@name ; неправильный — спецсимвол
+http://notnfs/path ; неправильный — другой протокол
+nfs://longservername/this/is/a/very/very/very/long/path/that/exceeds/limit
+nfs://x/y/z
+nfs://xyz
+nfs://correct/One/Two/Three
+nfs://wrong/with/1nvalidName
+nfs://BOX/Exit
