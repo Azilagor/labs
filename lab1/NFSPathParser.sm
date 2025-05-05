@@ -1,0 +1,53 @@
+%start Main::Start
+%class NFSParser
+%header NFSParser.h
+
+%map Main
+
+%%
+
+Start {
+    N(n)     N1 {}
+}
+
+N1 {
+    F(f)     N2 {}
+}
+
+N2 {
+    S(s)     Colon1 {}
+}
+
+Colon1 {
+    Colon    Colon2 {}
+}
+
+Colon2 {
+    Slash    Slash1 {}
+}
+
+Slash1 {
+    Slash    Server { clearbuf(); }
+}
+
+Server {
+    Lower(x:char)   Server { addtobuf(x); }
+    Slash           Dir { recordServer(); clearbuf(); }
+}
+
+Dir {
+    Lower(x:char)   Dir { addtobuf(x); }
+    Slash           Dir { clearbuf(); }
+    EOS             Accept { clearbuf(); }
+}
+
+Accept {
+    EOS             nil {}
+}
+
+Invalid {
+}
+
+Default {
+    Default         Invalid { clearbuf(); }
+}

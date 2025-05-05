@@ -1,0 +1,100 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> start
+Rule 1     start -> NFS WORD path
+Rule 2     path -> SLASH WORD path
+Rule 3     path -> empty
+Rule 4     empty -> <empty>
+
+Terminals, with rules where they appear
+
+NFS                  : 1
+SLASH                : 2
+WORD                 : 1 2
+error                : 
+
+Nonterminals, with rules where they appear
+
+empty                : 3
+path                 : 1 2
+start                : 0
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . start
+    (1) start -> . NFS WORD path
+
+    NFS             shift and go to state 2
+
+    start                          shift and go to state 1
+
+state 1
+
+    (0) S' -> start .
+
+
+
+state 2
+
+    (1) start -> NFS . WORD path
+
+    WORD            shift and go to state 3
+
+
+state 3
+
+    (1) start -> NFS WORD . path
+    (2) path -> . SLASH WORD path
+    (3) path -> . empty
+    (4) empty -> .
+
+    SLASH           shift and go to state 5
+    $end            reduce using rule 4 (empty -> .)
+
+    path                           shift and go to state 4
+    empty                          shift and go to state 6
+
+state 4
+
+    (1) start -> NFS WORD path .
+
+    $end            reduce using rule 1 (start -> NFS WORD path .)
+
+
+state 5
+
+    (2) path -> SLASH . WORD path
+
+    WORD            shift and go to state 7
+
+
+state 6
+
+    (3) path -> empty .
+
+    $end            reduce using rule 3 (path -> empty .)
+
+
+state 7
+
+    (2) path -> SLASH WORD . path
+    (2) path -> . SLASH WORD path
+    (3) path -> . empty
+    (4) empty -> .
+
+    SLASH           shift and go to state 5
+    $end            reduce using rule 4 (empty -> .)
+
+    path                           shift and go to state 8
+    empty                          shift and go to state 6
+
+state 8
+
+    (2) path -> SLASH WORD path .
+
+    $end            reduce using rule 2 (path -> SLASH WORD path .)
+

@@ -1,6 +1,7 @@
 import re
 import time
 from flex import method_flex
+from ply_parser import method_ply
 from smc import method_smc
 
 
@@ -28,9 +29,11 @@ def process_line(line, method):
     if method == 1:
         return method_regex(line)
     elif method == 2:
-        return method_smc()
+        return method_smc(line)
     elif method == 3:
         return method_flex()
+    elif method == 4:
+        return method_ply(line)
     return False, None
 
 def main():
@@ -38,7 +41,8 @@ def main():
     print("1) Регулярные выражения")
     print("2) SMC вариант 1 (ручная проверка)")
     print("3) SMC вариант 2 (символьный автомат)")
-    method = int(input("Введите номер метода (1/2/3): "))
+    print("4) Ply (лексер + парсер)")
+    method = int(input("Введите номер метода (1/2/3)/4: "))
 
     print("\nВыберите источник ввода:")
     print("1) Ввод из файла")
@@ -46,7 +50,7 @@ def main():
 
     lines = []
     if source == 1:
-        filename = input("\nВведите имя файла: ")
+        filename = "input.txt"
         with open(filename, "r") as f:
             lines = f.readlines()
 
