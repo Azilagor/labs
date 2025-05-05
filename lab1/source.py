@@ -1,8 +1,7 @@
 import re
 import time
-from flex import method_flex
 from ply_parser import method_ply
-from smc import method_smc
+from smc import FSMWrapper
 
 
 MAX_LENGTH = 63
@@ -15,7 +14,7 @@ def record_server(server):
         server_stats[server] = 1
 
 def method_regex(line):
-    pattern = re.compile(r"^nfs://([a-zA-Z]+)(/[a-zA-Z]+)*$")
+    pattern = re.compile(r"^nfs://([a-zA-Z]+)(/[a-zA-Z]+)+$")
     match = pattern.fullmatch(line.strip())
     if not match:
         return False, None
@@ -24,6 +23,22 @@ def method_regex(line):
         return False, None
     return True, match.group(1)
 
+def method_smc(line: str):
+    fsm = FSMWrapper()
+    try:
+        path = line.strip()
+        if not path.startswith("nfs://"):
+            return False, None
+
+        for ch in path:
+            fsm.input(ch)
+        fsm.input('\0')  # сигнал конца строки
+    except Exception:
+        return False, None
+
+    return fsm.accepted and fsm.server is not None, fsm.server
+
+
 
 def process_line(line, method):
     if method == 1:
@@ -31,22 +46,18 @@ def process_line(line, method):
     elif method == 2:
         return method_smc(line)
     elif method == 3:
-        return method_flex()
-    elif method == 4:
         return method_ply(line)
     return False, None
 
 def main():
     print("Выберите метод проверки:")
     print("1) Регулярные выражения")
-    print("2) SMC вариант 1 (ручная проверка)")
-    print("3) SMC вариант 2 (символьный автомат)")
-    print("4) Ply (лексер + парсер)")
-    method = int(input("Введите номер метода (1/2/3)/4: "))
+    print("2) SMC вариант 2 (символьный автомат)")
+    print("3) Ply (лексер + парсер)")
+    method = int(input("Введите номер метода (1/2/3): "))
 
-    print("\nВыберите источник ввода:")
-    print("1) Ввод из файла")
-    source = int(input("Введите номер источника (1): "))
+
+    source = 1
 
     lines = []
     if source == 1:
@@ -68,11 +79,11 @@ def main():
     end_time = time.perf_counter()
     elapsed = end_time - start_time
 
-    print("\n📊 Статистика по серверам:")
+    print("\n Статистика по серверам:")
     for name, count in server_stats.items():
         print(f"{name}: {count} раз")
 
-    print(f"\n⏱️ Время выполнения: {elapsed:.6f} секунд")
+    print(f"\n Время выполнения: {elapsed:.6f} секунд")
 
 if __name__ == "__main__":
     main()

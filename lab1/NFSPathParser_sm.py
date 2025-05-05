@@ -6,7 +6,7 @@
 import statemap
 
 
-class NFSParserState(statemap.State):
+class NFSPathParserState(statemap.State):
 
     def Entry(self, fsm):
         pass
@@ -19,7 +19,7 @@ class NFSParserState(statemap.State):
             fsm.getState().getName(), fsm.getTransition())
         raise statemap.TransitionUndefinedException(msg)
 
-class NFSParser_sm(statemap.FSMContext):
+class NFSPathParser_sm(statemap.FSMContext):
 
     def __init__(self, owner):
         statemap.FSMContext.__init__(self, Main.Start)

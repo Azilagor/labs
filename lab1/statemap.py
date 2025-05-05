@@ -1,58 +1,172 @@
-# statemap.py — минимальная версия для поддержки SMC Python FSM
+#
+# The contents of this file are subject to the Mozilla Public
+# License Version 1.1 (the "License"); you may not use this file
+# except in compliance with the License. You may obtain a copy of
+# the License at http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS
+# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# rights and limitations under the License.
+#
+# The Original Code is State Machine Compiler (SMC).
+#
+# The Initial Developer of the Original Code is Charles W. Rapp.
+# Portions created by Charles W. Rapp are
+# Copyright (C) 2005. Charles W. Rapp.
+# All Rights Reserved.
+#
+# Port to Python by Francois Perrad, francois.perrad@gadz.org
+# Copyright 2004, Francois Perrad.
+# All Rights Reserved.
+#
+# Contributor(s):
+#
+# RCS ID
+# Id: statemap.py,v 1.8 2010/09/11 18:56:57 fperrad Exp
+#
+# See: http://smc.sourceforge.net/
+#
 
-class FSMException(Exception):
-    pass
+import sys
+
+class StateUndefinedException(Exception):
+	"""A StateUndefinedException is thrown by
+	an SMC-generated state machine whenever a transition is taken
+	and there is no state currently set. This occurs when a
+	transition is issued from within a transition action."""
+	pass
+
+class TransitionUndefinedException(Exception):
+	"""A TransitionUndefinedException is thrown by
+	an SMC-generated state machine whenever a transition is taken
+	which:
+
+	 - Is not explicitly defined in the current state.
+	 - Is not explicitly defined in the current FSM's default state.
+	 - There is no Default transition in the current state."""
+	pass
 
 
-class State:
-    def __init__(self, name):
-        self._name = name
+class State(object):
+	"""base State class"""
 
-    def Entry(self, fsm):
-        pass
+	def __init__(self, name, id):
+		self._name = name
+		self._id = id
 
-    def Exit(self, fsm):
-        pass
+	def getName(self):
+		"""Returns the state's printable name."""
+		return self._name
 
-    def __str__(self):
-        return self._name
-
-
-class StateMap:
-    def __init__(self):
-        self._states = {}
-
-    def add_state(self, name, state):
-        self._states[name] = state
-
-    def get_state(self, name):
-        return self._states.get(name)
+	def getId(self):
+		"""Returns the state's unique identifier."""
+		return self._id
 
 
-class FSMContext:
-    def __init__(self, state):
-        self._state = state
-        self._state_stack = []
+class FSMContext(object):
+	"""The user can derive FSM contexts from this class and interface
+	to them with the methods of this class.
 
-    def getState(self):
-        return self._state
+	The finite state machine needs to be initialized to the starting
+	state of the FSM.  This must be done manually in the constructor
+	of the derived class.
+	"""
 
-    def setState(self, state):
-        if self._state is not None:
-            self._state.Exit(self)
-        self._state = state
-        if self._state is not None:
-            self._state.Entry(self)
+	def __init__(self, state):
+		self._state = state
+		self._previous_state = None
+		self._state_stack = []
+		self._transition = None
+		self._debug_flag = False
+		self._debug_stream = sys.stderr
 
-    def pushState(self, state):
-        self._state_stack.append(self._state)
-        self.setState(state)
+	def getDebugFlag(self):
+		"""Returns the debug flag's current setting."""
+		return self._debug_flag
 
-    def popState(self):
-        if self._state_stack:
-            self.setState(self._state_stack.pop())
-        else:
-            raise FSMException("State stack is empty.")
+	def setDebugFlag(self, flag):
+		"""Sets the debug flag.
+		A true value means debugging is on and false means off."""
+		self._debug_flag = flag
 
-    def clearStateStack(self):
-        self._state_stack.clear()
+	def getDebugStream(self):
+		"""Returns the stream to which debug output is written."""
+		return self._debug_stream
+
+	def setDebugStream(self, stream):
+		"""Sets the debug output stream."""
+		self._debug_stream = stream
+
+	def getState(self):
+		"""Returns the current state."""
+		if self._state == None:
+			raise StateUndefinedException
+		return self._state
+
+	def isInTransition(self):
+		"""Is this state machine already inside a transition?
+		True if state is undefined."""
+		if self._state == None:
+			return True
+		else:
+			return False
+
+	def getTransition(self):
+		"""Returns the current transition's name.
+		Used only for debugging purposes."""
+		return self._transition
+
+	def clearState(self):
+		"""Clears the current state."""
+		self._previous_state = self._state
+		self._state = None
+
+
+	def getPreviousState(self):
+		"""Returns the state which a transition left.
+		May be None"""
+		return self._previous_state
+
+
+	def setState(self, state):
+		"""Sets the current state to the specified state."""
+		if not isinstance(state, State):
+			raise ValueError("state should be a statemap.State")
+		self._state = state
+		if self._debug_flag:
+			self._debug_stream.write("ENTER STATE     : %s\n" % self._state.getName())
+
+	def isStateStackEmpty(self):
+		"""Returns True if the state stack is empty and False otherwise."""
+		return len(self._state_stack) == 0
+
+	def getStateStackDepth(self):
+		"""Returns the state stack's depth."""
+		return len(self._state_stack)
+
+	def pushState(self, state):
+		"""Push the current state on top of the state stack
+		and make the specified state the current state."""
+		if not isinstance(state, State):
+			raise ValueError("state should be a statemap.State")
+		if self._state != None:
+			self._state_stack.append(self._state)
+		self._state = state
+		if self._debug_flag:
+			self._debug_stream.write("PUSH TO STATE   : %s\n" % self._state.getName())
+
+	def popState(self):
+		"""Make the state on top of the state stack the current state."""
+		if len(self._state_stack) == 0:
+			if self._debug_flag:
+				self._debug_stream.write("POPPING ON EMPTY STATE STACK.\n")
+			raise ValueError("empty state stack")
+		else:
+			self._state = self._state_stack.pop()
+			if self._debug_flag:
+				self._debug_stream.write("POP TO STATE    : %s\n" % self._state.getName())
+
+	def emptyStateStack(self):
+		"""Remove all states from the state stack."""
+		self._state_stack = []

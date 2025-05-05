@@ -1,17 +1,24 @@
-# ply_parser.py
 import ply.lex as lex
 import ply.yacc as yacc
 
 MAX_LENGTH = 63
-server_name = None
-is_valid = False
 
-# === Лексер ===
-tokens = ('NFS', 'SLASH', 'WORD')
+# === Токены ===
+tokens = ('NFS', 'SLASH', 'NAME')
 
-t_NFS = r'nfs://'
-t_SLASH = r'/'
-t_WORD = r'[a-z]+'
+# === Лексер с ручным приоритетом ===
+
+def t_NFS(t):
+    r'nfs://'
+    return t
+
+def t_SLASH(t):
+    r'/'
+    return t
+
+def t_NAME(t):
+    r'[a-zA-Z]+'
+    return t
 
 t_ignore = ' \t'
 
@@ -21,19 +28,29 @@ def t_error(t):
 lexer = lex.lex()
 
 # === Парсер ===
+class ParseState:
+    def __init__(self):
+        self.server = None
+        self.is_valid = False
+
+state = ParseState()
 
 def p_start(p):
-    "start : NFS WORD path"
-    global is_valid, server_name
-    total_len = len(p[2]) + len(''.join(p[3]))
+    'start : NFS NAME path'
+    total_len = len(p[2]) + len(''.join(p[3]))  # имя сервера + путь
     if total_len > MAX_LENGTH:
-        raise ValueError("Превышена длина пути")
-    server_name = p[2]
-    is_valid = True
+        raise ValueError("Путь слишком длинный")
+    state.server = p[2]
+    state.is_valid = True
 
 def p_path(p):
-    """path : SLASH WORD path
-            | empty"""
+    'path : SLASH NAME more_path'
+    # хотя бы один каталог обязателен
+    p[0] = ["/", p[2]] + p[3]
+
+def p_more_path(p):
+    '''more_path : SLASH NAME more_path
+                 | empty'''
     if len(p) == 4:
         p[0] = ["/", p[2]] + p[3]
     else:
@@ -48,12 +65,12 @@ def p_error(p):
 
 parser = yacc.yacc()
 
+# === Метод для main.py ===
 def method_ply(line):
-    global is_valid, server_name
-    is_valid = False
-    server_name = None
+    global state
+    state = ParseState()
     try:
-        parser.parse(line)
+        parser.parse(line.strip(), lexer=lexer)
     except Exception:
         return False, None
-    return is_valid, server_name
+    return state.is_valid, state.server

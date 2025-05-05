@@ -1,53 +1,61 @@
-%start Main::Start
-%class NFSParser
-%header NFSParser.h
+%class NFSPathParser
+%package parser
+%header "NFSPathParser.h"
 
+%start Main::Start
 %map Main
 
 %%
 
 Start {
-    N(n)     N1 {}
+    n          Read_n {}
 }
 
-N1 {
-    F(f)     N2 {}
+Read_n {
+    f          Read_f {}
 }
 
-N2 {
-    S(s)     Colon1 {}
+Read_f {
+    s          Read_s {}
 }
 
-Colon1 {
-    Colon    Colon2 {}
+Read_s {
+    Colon      Read_colon1 {}
 }
 
-Colon2 {
-    Slash    Slash1 {}
+Read_colon1 {
+    Slash      Read_colon2 {}
 }
 
-Slash1 {
-    Slash    Server { clearbuf(); }
+Read_colon2 {
+    Slash      ReadServer {clearbuf();}
 }
 
-Server {
-    Lower(x:char)   Server { addtobuf(x); }
-    Slash           Dir { recordServer(); clearbuf(); }
+ReadServer {
+    Letter(x : char)   ReadServer {addtobuf(x);}
+    Slash              ReadPath {recordServer(); clearbuf();}
+    EOS                Invalid {clearbuf();}
 }
 
-Dir {
-    Lower(x:char)   Dir { addtobuf(x); }
-    Slash           Dir { clearbuf(); }
-    EOS             Accept { clearbuf(); }
+ReadPath {
+    Letter(x : char)   ReadPathWord {addtobuf(x);}
+    EOS                Invalid {clearbuf();}
+}
+
+ReadPathWord {
+    Letter(x : char)   ReadPathWord {addtobuf(x);}
+    Slash              ReadPath {clearbuf();}
+    EOS                Accept {clearbuf();}
 }
 
 Accept {
-    EOS             nil {}
+    // Конечное состояние
 }
 
 Invalid {
+    Default            Invalid {clearbuf();}
 }
 
 Default {
-    Default         Invalid { clearbuf(); }
+    Default            Invalid {clearbuf();}
 }

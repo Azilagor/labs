@@ -1,45 +1,31 @@
-# from NFSPathParser_sm import NFSParser
+from NFSPathParser_sm import NFSPathParser_sm
 
-# class FSMWrapper:
-#     def __init__(self):
-#         self.buf = ""
-#         self.server = None
-#         self.accepted = False
+class FSMWrapper:
+    def __init__(self):
+        self.buf = ""
+        self.server = None
+        self.accepted = False
 
-#         self.fsm = NFSParser(self)
-#         self.fsm.enterStartState()
+        # Инициализируем автомат и стартуем
+        self.fsm = NFSPathParser_sm(self)
+        self.fsm.enterStartState()
 
-#     def input(self, ch):
-#         method = getattr(self.fsm, f"{ch}" if ch.isalpha() else {
-#             ':': 'Colon', '/': 'Slash', '\0': 'EOS'
-#         }.get(ch, 'Default'), None)
+    def input(self, ch):
+        # Подставляем нужное событие в зависимости от символа
+        if ch.isalpha():
+            self.fsm.Letter(ch)
+        elif ch == ':':
+            self.fsm.Colon()
+        elif ch == '/':
+            self.fsm.Slash()
+        elif ch == '\0':
+            self.fsm.EOS()
+        else:
+            self.fsm.Default()
 
-#         if method:
-#             method()
-#         else:
-#             self.Default()
-
-#     # FSM callbacks
-#     def addtobuf(self, x): self.buf += x
-#     def clearbuf(self): self.buf = ""
-#     def recordServer(self): self.server = self.buf
-#     def clearallbuf(self): self.buf = ""
-#     def nil(self): self.accepted = True
-
-
-def method_smc(line: str):
-    # fsm = FSMWrapper()
-    # try:
-    #     path = line.strip()
-    #     if not path.startswith("nfs://"):
-    #         return False, None
-
-    #     for ch in path:
-    #         fsm.input(ch)
-    #     fsm.input('\0')  # конец строки
-
-    # except Exception:
-    #     return False, None
-
-    return print("smc!")
-# fsm.accepted and fsm.server is not None, fsm.server
+    # Методы, вызываемые автоматом (действия из .sm)
+    def addtobuf(self, x): self.buf += x
+    def clearbuf(self): self.buf = ""
+    def recordServer(self): self.server = self.buf
+    def clearallbuf(self): self.buf = ""
+    def Accept(self): self.accepted = True
