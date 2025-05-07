@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'NAME NFS SLASHstart : NFS NAME pathpath : SLASH NAME more_pathmore_path : SLASH NAME more_path\n                 | emptyempty :'
+_lr_signature = 'NAME NFS SLASHstart : NFS NAME SLASH NAME SLASH restrest : segment rest\n            | emptysegment : NAME\n               | NAME SLASHempty :'
     
-_lr_action_items = {'NFS':([0,],[2,]),'$end':([1,4,6,8,9,10,11,],[0,-1,-5,-2,-4,-5,-3,]),'NAME':([2,5,7,],[3,6,10,]),'SLASH':([3,6,10,],[5,7,7,]),}
+_lr_action_items = {'NFS':([0,],[2,]),'$end':([1,6,7,8,9,10,11,12,],[0,-6,-4,-1,-6,-3,-5,-2,]),'NAME':([2,4,6,7,9,11,],[3,5,7,-4,7,-5,]),'SLASH':([3,5,7,],[4,6,11,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'start':([0,],[1,]),'path':([3,],[4,]),'more_path':([6,10,],[8,11,]),'empty':([6,10,],[9,9,]),}
+_lr_goto_items = {'start':([0,],[1,]),'rest':([6,9,],[8,12,]),'segment':([6,9,],[9,9,]),'empty':([6,9,],[10,10,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,9 +27,10 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> start","S'",1,None,None,None),
-  ('start -> NFS NAME path','start',3,'p_start','ply_parser.py',39),
-  ('path -> SLASH NAME more_path','path',3,'p_path','ply_parser.py',47),
-  ('more_path -> SLASH NAME more_path','more_path',3,'p_more_path','ply_parser.py',52),
-  ('more_path -> empty','more_path',1,'p_more_path','ply_parser.py',53),
-  ('empty -> <empty>','empty',0,'p_empty','ply_parser.py',60),
+  ('start -> NFS NAME SLASH NAME SLASH rest','start',6,'p_start','ply_parser.py',39),
+  ('rest -> segment rest','rest',2,'p_rest','ply_parser.py',47),
+  ('rest -> empty','rest',1,'p_rest','ply_parser.py',48),
+  ('segment -> NAME','segment',1,'p_segment','ply_parser.py',55),
+  ('segment -> NAME SLASH','segment',2,'p_segment','ply_parser.py',56),
+  ('empty -> <empty>','empty',0,'p_empty','ply_parser.py',63),
 ]

@@ -14,15 +14,430 @@ class NFSPathParserState(statemap.State):
     def Exit(self, fsm):
         pass
 
+    def Colon(self, fsm):
+        self.Default(fsm)
+
+    def Digit(self, fsm, x):
+        self.Default(fsm)
+
+    def EOS(self, fsm):
+        self.Default(fsm)
+
+    def Letter(self, fsm, x):
+        self.Default(fsm)
+
+    def Slash(self, fsm):
+        self.Default(fsm)
+
+    def f(self, fsm):
+        self.Default(fsm)
+
+    def n(self, fsm):
+        self.Default(fsm)
+
+    def s(self, fsm):
+        self.Default(fsm)
+
     def Default(self, fsm):
         msg = "\n\tState: %s\n\tTransition: %s" % (
             fsm.getState().getName(), fsm.getTransition())
         raise statemap.TransitionUndefinedException(msg)
 
+class NFSPath_Default(NFSPathParserState):
+
+    def Default(self, fsm):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.reportError()
+        finally:
+            fsm.setState(NFSPath.Invalid)
+            fsm.getState().Entry(fsm)
+
+
+    def Letter(self, fsm, x):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def Digit(self, fsm, x):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def Slash(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def Colon(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def EOS(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def n(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def f(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def s(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+class NFSPath_Start(NFSPath_Default):
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def n(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Protocol_N)
+        fsm.getState().Entry(fsm)
+
+
+class NFSPath_Protocol_N(NFSPath_Default):
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def f(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Protocol_F)
+        fsm.getState().Entry(fsm)
+
+
+class NFSPath_Protocol_F(NFSPath_Default):
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def s(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Protocol_S)
+        fsm.getState().Entry(fsm)
+
+
+class NFSPath_Protocol_S(NFSPath_Default):
+
+    def Colon(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Protocol_Colon)
+        fsm.getState().Entry(fsm)
+
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+class NFSPath_Protocol_Colon(NFSPath_Default):
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def Slash(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Protocol_Slash1)
+        fsm.getState().Entry(fsm)
+
+
+class NFSPath_Protocol_Slash1(NFSPath_Default):
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def Slash(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Protocol_Slash2)
+        fsm.getState().Entry(fsm)
+
+
+class NFSPath_Protocol_Slash2(NFSPath_Default):
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def Letter(self, fsm, x):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.addtobuf(x)
+        finally:
+            fsm.setState(NFSPath.ServerName)
+            fsm.getState().Entry(fsm)
+
+
+class NFSPath_ServerName(NFSPath_Default):
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def Letter(self, fsm, x):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.addtobuf(x)
+        finally:
+            fsm.setState(NFSPath.ServerName)
+            fsm.getState().Entry(fsm)
+
+
+    def Slash(self, fsm):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.recordServerName()
+            ctxt.clearbuf()
+        finally:
+            fsm.setState(NFSPath.FirstSlash)
+            fsm.getState().Entry(fsm)
+
+
+class NFSPath_FirstSlash(NFSPath_Default):
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def Letter(self, fsm, x):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.addtobuf(x)
+        finally:
+            fsm.setState(NFSPath.FirstDirName)
+            fsm.getState().Entry(fsm)
+
+
+class NFSPath_FirstDirName(NFSPath_Default):
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def Letter(self, fsm, x):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.addtobuf(x)
+        finally:
+            fsm.setState(NFSPath.FirstDirName)
+            fsm.getState().Entry(fsm)
+
+
+    def Slash(self, fsm):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.recordFirstDir()
+            ctxt.clearbuf()
+        finally:
+            fsm.setState(NFSPath.SecondSlash)
+            fsm.getState().Entry(fsm)
+
+
+class NFSPath_SecondSlash(NFSPath_Default):
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def EOS(self, fsm):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.validatePath()
+        finally:
+            fsm.setState(NFSPath.Done)
+            fsm.getState().Entry(fsm)
+
+
+    def Letter(self, fsm, x):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.addtobuf(x)
+        finally:
+            fsm.setState(NFSPath.AdditionalDir)
+            fsm.getState().Entry(fsm)
+
+
+class NFSPath_AdditionalDir(NFSPath_Default):
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def EOS(self, fsm):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.validatePath()
+        finally:
+            fsm.setState(NFSPath.Done)
+            fsm.getState().Entry(fsm)
+
+
+    def Letter(self, fsm, x):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.addtobuf(x)
+        finally:
+            fsm.setState(NFSPath.AdditionalDir)
+            fsm.getState().Entry(fsm)
+
+
+    def Slash(self, fsm):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.recordDirPath()
+            ctxt.clearbuf()
+        finally:
+            fsm.setState(NFSPath.AdditionalSlash)
+            fsm.getState().Entry(fsm)
+
+
+class NFSPath_AdditionalSlash(NFSPath_Default):
+
+    def Default(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(NFSPath.Invalid)
+        fsm.getState().Entry(fsm)
+
+
+    def EOS(self, fsm):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.validatePath()
+        finally:
+            fsm.setState(NFSPath.Done)
+            fsm.getState().Entry(fsm)
+
+
+    def Letter(self, fsm, x):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.addtobuf(x)
+        finally:
+            fsm.setState(NFSPath.AdditionalDir)
+            fsm.getState().Entry(fsm)
+
+
+class NFSPath_Done(NFSPath_Default):
+
+    def EOS(self, fsm):
+        ctxt = fsm.getOwner()
+        endState = fsm.getState()
+        fsm.clearState()
+        try:
+            ctxt.clearallbuf()
+        finally:
+            fsm.setState(endState)
+
+
+class NFSPath_Invalid(NFSPath_Default):
+
+    def Default(self, fsm):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.reportError()
+        finally:
+            fsm.setState(NFSPath.Invalid)
+            fsm.getState().Entry(fsm)
+
+
+class NFSPath(object):
+
+    Start = NFSPath_Start('NFSPath.Start', 0)
+    Protocol_N = NFSPath_Protocol_N('NFSPath.Protocol_N', 1)
+    Protocol_F = NFSPath_Protocol_F('NFSPath.Protocol_F', 2)
+    Protocol_S = NFSPath_Protocol_S('NFSPath.Protocol_S', 3)
+    Protocol_Colon = NFSPath_Protocol_Colon('NFSPath.Protocol_Colon', 4)
+    Protocol_Slash1 = NFSPath_Protocol_Slash1('NFSPath.Protocol_Slash1', 5)
+    Protocol_Slash2 = NFSPath_Protocol_Slash2('NFSPath.Protocol_Slash2', 6)
+    ServerName = NFSPath_ServerName('NFSPath.ServerName', 7)
+    FirstSlash = NFSPath_FirstSlash('NFSPath.FirstSlash', 8)
+    FirstDirName = NFSPath_FirstDirName('NFSPath.FirstDirName', 9)
+    SecondSlash = NFSPath_SecondSlash('NFSPath.SecondSlash', 10)
+    AdditionalDir = NFSPath_AdditionalDir('NFSPath.AdditionalDir', 11)
+    AdditionalSlash = NFSPath_AdditionalSlash('NFSPath.AdditionalSlash', 12)
+    Done = NFSPath_Done('NFSPath.Done', 13)
+    Invalid = NFSPath_Invalid('NFSPath.Invalid', 14)
+    Default = NFSPath_Default('NFSPath.Default', -1)
+
 class NFSPathParser_sm(statemap.FSMContext):
 
     def __init__(self, owner):
-        statemap.FSMContext.__init__(self, Main.Start)
+        statemap.FSMContext.__init__(self, NFSPath.Start)
         self._owner = owner
 
     def __getattr__(self, attrib):

@@ -3,24 +3,25 @@ Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 Grammar
 
 Rule 0     S' -> start
-Rule 1     start -> NFS NAME path
-Rule 2     path -> SLASH NAME more_path
-Rule 3     more_path -> SLASH NAME more_path
-Rule 4     more_path -> empty
-Rule 5     empty -> <empty>
+Rule 1     start -> NFS NAME SLASH NAME SLASH rest
+Rule 2     rest -> segment rest
+Rule 3     rest -> empty
+Rule 4     segment -> NAME
+Rule 5     segment -> NAME SLASH
+Rule 6     empty -> <empty>
 
 Terminals, with rules where they appear
 
-NAME                 : 1 2 3
+NAME                 : 1 1 4 5
 NFS                  : 1
-SLASH                : 2 3
+SLASH                : 1 1 5
 error                : 
 
 Nonterminals, with rules where they appear
 
-empty                : 4
-more_path            : 2 3
-path                 : 1
+empty                : 3
+rest                 : 1 2
+segment              : 2
 start                : 0
 
 Parsing method: LALR
@@ -28,7 +29,7 @@ Parsing method: LALR
 state 0
 
     (0) S' -> . start
-    (1) start -> . NFS NAME path
+    (1) start -> . NFS NAME SLASH NAME SLASH rest
 
     NFS             shift and go to state 2
 
@@ -42,84 +43,99 @@ state 1
 
 state 2
 
-    (1) start -> NFS . NAME path
+    (1) start -> NFS . NAME SLASH NAME SLASH rest
 
     NAME            shift and go to state 3
 
 
 state 3
 
-    (1) start -> NFS NAME . path
-    (2) path -> . SLASH NAME more_path
+    (1) start -> NFS NAME . SLASH NAME SLASH rest
 
-    SLASH           shift and go to state 5
+    SLASH           shift and go to state 4
 
-    path                           shift and go to state 4
 
 state 4
 
-    (1) start -> NFS NAME path .
+    (1) start -> NFS NAME SLASH . NAME SLASH rest
 
-    $end            reduce using rule 1 (start -> NFS NAME path .)
+    NAME            shift and go to state 5
 
 
 state 5
 
-    (2) path -> SLASH . NAME more_path
+    (1) start -> NFS NAME SLASH NAME . SLASH rest
 
-    NAME            shift and go to state 6
+    SLASH           shift and go to state 6
 
 
 state 6
 
-    (2) path -> SLASH NAME . more_path
-    (3) more_path -> . SLASH NAME more_path
-    (4) more_path -> . empty
-    (5) empty -> .
+    (1) start -> NFS NAME SLASH NAME SLASH . rest
+    (2) rest -> . segment rest
+    (3) rest -> . empty
+    (4) segment -> . NAME
+    (5) segment -> . NAME SLASH
+    (6) empty -> .
 
-    SLASH           shift and go to state 7
-    $end            reduce using rule 5 (empty -> .)
+    NAME            shift and go to state 7
+    $end            reduce using rule 6 (empty -> .)
 
-    more_path                      shift and go to state 8
-    empty                          shift and go to state 9
+    rest                           shift and go to state 8
+    segment                        shift and go to state 9
+    empty                          shift and go to state 10
 
 state 7
 
-    (3) more_path -> SLASH . NAME more_path
+    (4) segment -> NAME .
+    (5) segment -> NAME . SLASH
 
-    NAME            shift and go to state 10
+    NAME            reduce using rule 4 (segment -> NAME .)
+    $end            reduce using rule 4 (segment -> NAME .)
+    SLASH           shift and go to state 11
 
 
 state 8
 
-    (2) path -> SLASH NAME more_path .
+    (1) start -> NFS NAME SLASH NAME SLASH rest .
 
-    $end            reduce using rule 2 (path -> SLASH NAME more_path .)
+    $end            reduce using rule 1 (start -> NFS NAME SLASH NAME SLASH rest .)
 
 
 state 9
 
-    (4) more_path -> empty .
+    (2) rest -> segment . rest
+    (2) rest -> . segment rest
+    (3) rest -> . empty
+    (4) segment -> . NAME
+    (5) segment -> . NAME SLASH
+    (6) empty -> .
 
-    $end            reduce using rule 4 (more_path -> empty .)
+    NAME            shift and go to state 7
+    $end            reduce using rule 6 (empty -> .)
 
+    segment                        shift and go to state 9
+    rest                           shift and go to state 12
+    empty                          shift and go to state 10
 
 state 10
 
-    (3) more_path -> SLASH NAME . more_path
-    (3) more_path -> . SLASH NAME more_path
-    (4) more_path -> . empty
-    (5) empty -> .
+    (3) rest -> empty .
 
-    SLASH           shift and go to state 7
-    $end            reduce using rule 5 (empty -> .)
+    $end            reduce using rule 3 (rest -> empty .)
 
-    more_path                      shift and go to state 11
-    empty                          shift and go to state 9
 
 state 11
 
-    (3) more_path -> SLASH NAME more_path .
+    (5) segment -> NAME SLASH .
 
-    $end            reduce using rule 3 (more_path -> SLASH NAME more_path .)
+    NAME            reduce using rule 5 (segment -> NAME SLASH .)
+    $end            reduce using rule 5 (segment -> NAME SLASH .)
+
+
+state 12
+
+    (2) rest -> segment rest .
+
+    $end            reduce using rule 2 (rest -> segment rest .)
 

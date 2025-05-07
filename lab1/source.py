@@ -14,7 +14,7 @@ def record_server(server):
         server_stats[server] = 1
 
 def method_regex(line):
-    pattern = re.compile(r"^nfs://([a-zA-Z]+)(/[a-zA-Z]+)+$")
+    pattern = re.compile(r"^nfs://([a-zA-Z]+)(/[a-zA-Z]+/)([a-zA-Z]+/)*([a-zA-Z]+(/)?)?$")
     match = pattern.fullmatch(line.strip())
     if not match:
         return False, None
@@ -23,7 +23,7 @@ def method_regex(line):
         return False, None
     return True, match.group(1)
 
-def method_smc(line: str):
+def method_smc(line):
     fsm = FSMWrapper()
     try:
         path = line.strip()

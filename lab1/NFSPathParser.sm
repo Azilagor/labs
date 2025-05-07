@@ -1,61 +1,95 @@
+%start NFSPath::Start
 %class NFSPathParser
-%package parser
-%header "NFSPathParser.h"
-
-%start Main::Start
-%map Main
-
+%map NFSPath
 %%
-
 Start {
-    n          Read_n {}
+    n                  Protocol_N {}
+    Default            Invalid {}
 }
 
-Read_n {
-    f          Read_f {}
+Protocol_N {
+    f                  Protocol_F {}
+    Default            Invalid {}
 }
 
-Read_f {
-    s          Read_s {}
+Protocol_F {
+    s                  Protocol_S {}
+    Default            Invalid {}
 }
 
-Read_s {
-    Colon      Read_colon1 {}
+Protocol_S {
+    Colon              Protocol_Colon {}
+    Default            Invalid {}
 }
 
-Read_colon1 {
-    Slash      Read_colon2 {}
+Protocol_Colon {
+    Slash              Protocol_Slash1 {}
+    Default            Invalid {}
 }
 
-Read_colon2 {
-    Slash      ReadServer {clearbuf();}
+Protocol_Slash1 {
+    Slash              Protocol_Slash2 {}
+    Default            Invalid {}
 }
 
-ReadServer {
-    Letter(x : char)   ReadServer {addtobuf(x);}
-    Slash              ReadPath {recordServer(); clearbuf();}
-    EOS                Invalid {clearbuf();}
+Protocol_Slash2 {
+    Letter(x : char)   ServerName {addtobuf(x);}
+    Default            Invalid {}
 }
 
-ReadPath {
-    Letter(x : char)   ReadPathWord {addtobuf(x);}
-    EOS                Invalid {clearbuf();}
+ServerName {
+    Letter(x : char)   ServerName {addtobuf(x);}
+    Slash              FirstSlash {recordServerName(); clearbuf();}
+    Default            Invalid {}
 }
 
-ReadPathWord {
-    Letter(x : char)   ReadPathWord {addtobuf(x);}
-    Slash              ReadPath {clearbuf();}
-    EOS                Accept {clearbuf();}
+FirstSlash {
+    Letter(x : char)   FirstDirName {addtobuf(x);}
+    Default            Invalid {}
 }
 
-Accept {
-    // Конечное состояние
+FirstDirName {
+    Letter(x : char)   FirstDirName {addtobuf(x);}
+    Slash              SecondSlash {recordFirstDir(); clearbuf();}
+    Default            Invalid {}
+}
+
+SecondSlash {
+    Letter(x : char)   AdditionalDir {addtobuf(x);}
+    EOS                Done {validatePath();}
+    Default            Invalid {}
+}
+
+AdditionalDir {
+    Letter(x : char)   AdditionalDir {addtobuf(x);}
+    Slash              AdditionalSlash {recordDirPath(); clearbuf();}
+    EOS                Done {validatePath();}
+    Default            Invalid {}
+}
+
+AdditionalSlash {
+    Letter(x : char)   AdditionalDir {addtobuf(x);}
+    EOS                Done {validatePath();}
+    Default            Invalid {}
+}
+
+Done {
+    EOS                nil {clearallbuf();}
 }
 
 Invalid {
-    Default            Invalid {clearbuf();}
+    Default            Invalid {reportError();}
 }
 
 Default {
-    Default            Invalid {clearbuf();}
+    Default            Invalid {reportError();}
+    Letter(x : char)   Invalid {}
+    Digit(x : char)    Invalid {}
+    Slash              Invalid {}
+    Colon              Invalid {}
+    EOS                Invalid {}
+    n                  Invalid {}
+    f                  Invalid {}
+    s                  Invalid {}
 }
+%%

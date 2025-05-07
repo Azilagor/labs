@@ -6,8 +6,6 @@ MAX_LENGTH = 63
 # === Токены ===
 tokens = ('NFS', 'SLASH', 'NAME')
 
-# === Лексер с ручным приоритетом ===
-
 def t_NFS(t):
     r'nfs://'
     return t
@@ -27,7 +25,7 @@ def t_error(t):
 
 lexer = lex.lex()
 
-# === Парсер ===
+# === Парсер состояние
 class ParseState:
     def __init__(self):
         self.server = None
@@ -35,26 +33,31 @@ class ParseState:
 
 state = ParseState()
 
+# === Парсер правил
+
 def p_start(p):
-    'start : NFS NAME path'
-    total_len = len(p[2]) + len(''.join(p[3]))  # имя сервера + путь
+    '''start : NFS NAME SLASH NAME SLASH rest'''
+    total_len = len(p[2]) + len(p[4]) + 2 + sum(len(seg) for seg in p[6])
     if total_len > MAX_LENGTH:
         raise ValueError("Путь слишком длинный")
     state.server = p[2]
     state.is_valid = True
 
-def p_path(p):
-    'path : SLASH NAME more_path'
-    # хотя бы один каталог обязателен
-    p[0] = ["/", p[2]] + p[3]
-
-def p_more_path(p):
-    '''more_path : SLASH NAME more_path
-                 | empty'''
-    if len(p) == 4:
-        p[0] = ["/", p[2]] + p[3]
+def p_rest(p):
+    '''rest : segment rest
+            | empty'''
+    if len(p) == 3:
+        p[0] = [p[1]] + p[2]
     else:
         p[0] = []
+
+def p_segment(p):
+    '''segment : NAME
+               | NAME SLASH'''
+    if len(p) == 3:
+        p[0] = p[1] + "/"
+    else:
+        p[0] = p[1]
 
 def p_empty(p):
     'empty :'
@@ -65,7 +68,7 @@ def p_error(p):
 
 parser = yacc.yacc()
 
-# === Метод для main.py ===
+# === Метод
 def method_ply(line):
     global state
     state = ParseState()
