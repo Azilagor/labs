@@ -1,3 +1,5 @@
+from syntax_tree import SyntaxTree 
+
 class DFAState:
     def __init__(self, id_set: set, id_num: int, is_final: bool):
         self.id_set = id_set                # множество позиций (по followpos)
@@ -44,7 +46,7 @@ class DFA:
                     self.state_map[frozen_u] = new_state
                     queue.append(new_state)
                 current.transitions[symbol] = self.state_map[frozen_u]
-                
+
     def match(self, s: str) -> bool:
         current = self.states[0]
         for c in s:
