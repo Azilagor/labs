@@ -1,10 +1,10 @@
 class Node:
     def __init__(self, type_, label, left=None, right=None, id=None):
         self.type = type_       # 'leaf', 'concat', 'or', 'star'
-        self.label = label      # символ или оператор
+        self.label = label      
         self.left = left
         self.right = right
-        self.id = id            # уникальный id (только для листа)
+        self.id = id            
 
         self.nullable = False
         self.firstpos = set()
@@ -12,8 +12,8 @@ class Node:
 
 class SyntaxTree:
     def __init__(self, postfix_tokens):
-        self.leaves = {}  # id: label
-        self.followpos = {}  # id: set()
+        self.leaves = {}  
+        self.followpos = {}  
         self.alphabet = set()
         self.id_counter = 1
 
@@ -30,6 +30,30 @@ class SyntaxTree:
             elif token == '*':
                 child = stack.pop()
                 node = Node('star', token, child)
+            elif token == '+':
+                base = stack.pop()
+                star = Node('star', '*', left=self.clone(base))
+                node = Node('concat', '.', base, star)
+            elif token == '?':
+                base = stack.pop()
+                epsilon = Node('leaf', '$', id=self.id_counter)
+                self.leaves[self.id_counter] = '$'
+                self.followpos[self.id_counter] = set()
+                self.id_counter += 1
+                node = Node('or', '|', base, epsilon)
+            elif token.startswith("{") and token.endswith("}"):
+                body = token[1:-1]
+                if ',' in body:
+                    parts = body.split(',')
+                    if len(parts) == 2 and parts[0].isdigit() and (parts[1].isdigit() or parts[1] == ''):
+                        min_count = int(parts[0])
+                        max_count = int(parts[1]) if parts[1] else min_count + 3  # ограничим "бесконечность"
+                    else:
+                        raise ValueError(f"Неверный формат повторения: {token}")
+                elif body.isdigit():
+                    min_count = max_count = int(body)
+                else:
+                    raise ValueError(f"Неверный формат повторения: {token}")
             else:
                 node = Node('leaf', token, id=self.id_counter)
                 self.leaves[self.id_counter] = token
@@ -38,7 +62,7 @@ class SyntaxTree:
                 self.id_counter += 1
             stack.append(node)
 
-        # добавим служебный символ конца строки
+        
         end_node = Node('leaf', '#', id=self.id_counter)
         self.leaves[self.id_counter] = '#'
         self.followpos[self.id_counter] = set()
@@ -75,3 +99,11 @@ class SyntaxTree:
             node.lastpos = node.left.lastpos
             for i in node.left.lastpos:
                 self.followpos[i] |= node.left.firstpos
+
+    def clone(self, node):
+        if node is None:
+            return None
+        new_node = Node(node.type, node.label, id=node.id)
+        new_node.left = self.clone(node.left)
+        new_node.right = self.clone(node.right)
+        return new_node

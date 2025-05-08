@@ -1,4 +1,5 @@
-from syntax_tree import SyntaxTree 
+from syntax_tree import SyntaxTree
+from collections import deque
 
 class DFAState:
     def __init__(self, id_set: set, id_num: int, is_final: bool):
@@ -10,17 +11,16 @@ class DFAState:
 
 
 class DFA:
-    def __init__(self, syntax_tree):
-        self.alphabet = syntax_tree.alphabet - {'$'}
-        self.terminal = syntax_tree.id_counter - 1  # позиция служебного символа '#'
+    def __init__(self, syntax_tree: SyntaxTree):
+        self.alphabet = syntax_tree.alphabet - {'$'}  # исключаем ε
+        self.terminal = syntax_tree.id_counter - 1    # позиция служебного символа '#'
         self.followpos = syntax_tree.followpos
+        self.leaves = syntax_tree.leaves             
         self.states = []
-        self.state_map = {}  # frozenset(id_set) -> DFAState
+        self.state_map = {} 
         self.build_dfa(syntax_tree.root)
 
     def build_dfa(self, root):
-        from collections import deque
-
         start_set = root.firstpos
         id_counter = 1
         start_state = DFAState(start_set, id_counter, self.terminal in start_set)
@@ -34,7 +34,7 @@ class DFA:
             for symbol in self.alphabet:
                 u = set()
                 for pos in current.id_set:
-                    if symbol == syntax_tree.leaves.get(pos):  # только если символ соответствует позиции
+                    if self.leaves.get(pos) == symbol:  
                         u |= self.followpos[pos]
                 if not u:
                     continue

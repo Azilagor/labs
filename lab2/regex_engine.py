@@ -13,6 +13,11 @@ class Regex:
     def compile(self):
         tokens = to_postfix(insert_concat(tokenize(self.pattern)))
         self.tree = SyntaxTree(tokens)
+
+        if self.tree.root is None:
+            raise ValueError("Ошибка построения дерева: root is None")
+
+
         self.dfa = DFA(self.tree)
         self.dfa = DFAOptimizer(self.dfa).minimize()
         self.compiled = True

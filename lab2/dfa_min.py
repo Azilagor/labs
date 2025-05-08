@@ -7,8 +7,7 @@ class DFAOptimizer:
         self.alphabet = dfa.alphabet
     
     def minimize(self):
-
-        # начальная классификация
+        
         partitions = [
             [s for s in self.original_dfa.states if not s.is_final],
             [s for s in self.original_dfa.states if s.is_final]

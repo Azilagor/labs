@@ -2,7 +2,7 @@ import re
 from typing import List
 
 # Приоритеты операторов
-precedence = {
+priority = {
     '|': 1,
     '.': 2,
     '*': 3,
@@ -11,15 +11,14 @@ precedence = {
 }
 
 def tokenize(regex: str) -> List[str]:
-    """
-    Разбивает регулярное выражение на токены.
-    """
     tokens = []
     i = 0
     while i < len(regex):
         c = regex[i]
-        if c == '\\':  # экранированный символ
-            tokens.append(regex[i:i+2])
+        if c == '&':
+            if i + 1 >= len(regex):
+                raise ValueError("Dangling & escape at end of regex")
+            tokens.append(regex[i+1])
             i += 2
         elif c in {'(', ')', '|', '.', '*', '+', '?'}:
             tokens.append(c)
@@ -37,7 +36,7 @@ def tokenize(regex: str) -> List[str]:
             tokens += list(group)
             tokens.append(')')
             i = j + 1
-        elif c == '{':  # повторение: {n} или {n,m}
+        elif c == '{':  # повторение {n} или {n,m}
             j = i
             while j < len(regex) and regex[j] != '}':
                 j += 1
@@ -50,10 +49,6 @@ def tokenize(regex: str) -> List[str]:
 
 
 def insert_concat(tokens: List[str]) -> List[str]:
-    """
-    Вставляет символ конкатенации '.' там, где она подразумевается.
-    Например: ab → a.b
-    """
     result = []
     for i in range(len(tokens)):
         token = tokens[i]
@@ -69,9 +64,6 @@ def insert_concat(tokens: List[str]) -> List[str]:
 
 
 def to_postfix(tokens: List[str]) -> List[str]:
-    """
-    Преобразует список токенов в постфиксную форму (обратную польскую нотацию).
-    """
     output = []
     stack = []
     for token in tokens:
@@ -80,10 +72,10 @@ def to_postfix(tokens: List[str]) -> List[str]:
         elif token == ')':
             while stack and stack[-1] != '(':
                 output.append(stack.pop())
-            stack.pop()  # убираем '('
-        elif token in precedence:
-            while (stack and stack[-1] in precedence and
-                   precedence[stack[-1]] >= precedence[token]):
+            stack.pop()  
+        elif token in priority:
+            while (stack and stack[-1] in priority and
+                   priority[stack[-1]] >= priority[token]):
                 output.append(stack.pop())
             stack.append(token)
         else:
