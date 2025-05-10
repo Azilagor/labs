@@ -3,93 +3,84 @@
 %map NFSPath
 %%
 Start {
-    n                  Protocol_N {}
-    Default            Invalid {}
+    n Protocol_N {}
+    Default Invalid {}
 }
 
 Protocol_N {
-    f                  Protocol_F {}
-    Default            Invalid {}
+    f Protocol_F {}
+    Default Invalid {}
 }
 
 Protocol_F {
-    s                  Protocol_S {}
-    Default            Invalid {}
+    s Protocol_S {}
+    Default Invalid {}
 }
 
 Protocol_S {
-    Colon              Protocol_Colon {}
-    Default            Invalid {}
+    Colon Protocol_Colon {}
+    Default Invalid {}
 }
 
 Protocol_Colon {
-    Slash              Protocol_Slash1 {}
-    Default            Invalid {}
+    Slash Protocol_Slash1 {}
+    Default Invalid {}
 }
 
 Protocol_Slash1 {
-    Slash              Protocol_Slash2 {}
-    Default            Invalid {}
+    Slash Protocol_Slash2 {}
+    Default Invalid {}
 }
 
 Protocol_Slash2 {
-    Letter(x : char)   ServerName {addtobuf(x);}
-    Default            Invalid {}
+    Letter(x : char) ServerName { addtobuf(x); }
+    Default Invalid {}
 }
 
 ServerName {
-    Letter(x : char)   ServerName {addtobuf(x);}
-    Slash              FirstSlash {recordServerName(); clearbuf();}
-    Default            Invalid {}
+    Letter(x : char) ServerName { addtobuf(x); }
+    Slash CatalogStart { recordServerName(); clearbuf(); }
+    Default Invalid {}
 }
 
-FirstSlash {
-    Letter(x : char)   FirstDirName {addtobuf(x);}
-    Default            Invalid {}
+CatalogStart {
+    Letter(x : char) CatalogName { addtobuf(x); }
+    Default Invalid {}
 }
 
-FirstDirName {
-    Letter(x : char)   FirstDirName {addtobuf(x);}
-    Slash              SecondSlash {recordFirstDir(); clearbuf();}
-    Default            Invalid {}
+CatalogName {
+    Letter(x : char) CatalogName { addtobuf(x); }
+    Slash AfterCatalog { clearbuf(); }
+    EOS Done { validatePath(); }
+    Default Invalid {}
 }
 
-SecondSlash {
-    Letter(x : char)   AdditionalDir {addtobuf(x);}
-    EOS                Done {validatePath();}
-    Default            Invalid {}
+AfterCatalog {
+    Letter(x : char) PathSegment { addtobuf(x); }
+    EOS Done { validatePath(); }
+    Default Invalid {}
 }
 
-AdditionalDir {
-    Letter(x : char)   AdditionalDir {addtobuf(x);}
-    Slash              AdditionalSlash {recordDirPath(); clearbuf();}
-    EOS                Done {validatePath();}
-    Default            Invalid {}
-}
-
-AdditionalSlash {
-    Letter(x : char)   AdditionalDir {addtobuf(x);}
-    EOS                Done {validatePath();}
-    Default            Invalid {}
+PathSegment {
+    Letter(x : char) PathSegment { addtobuf(x); }
+    Slash AfterCatalog { recordDirPath(); clearbuf(); }
+    EOS Done { validatePath(); }
+    Default Invalid {}
 }
 
 Done {
-    EOS                nil {clearallbuf();}
+    EOS Accept { nil(); clearallbuf(); }
+}
+
+Accept {
+    // Final state
 }
 
 Invalid {
-    Default            Invalid {reportError();}
+    Default Invalid { reportError(); clearallbuf(); }
 }
 
 Default {
-    Default            Invalid {reportError();}
-    Letter(x : char)   Invalid {}
-    Digit(x : char)    Invalid {}
-    Slash              Invalid {}
-    Colon              Invalid {}
-    EOS                Invalid {}
-    n                  Invalid {}
-    f                  Invalid {}
-    s                  Invalid {}
+    Default Invalid { reportError(); clearallbuf(); }
 }
 %%

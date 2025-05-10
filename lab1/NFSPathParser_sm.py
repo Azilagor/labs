@@ -17,9 +17,6 @@ class NFSPathParserState(statemap.State):
     def Colon(self, fsm):
         self.Default(fsm)
 
-    def Digit(self, fsm, x):
-        self.Default(fsm)
-
     def EOS(self, fsm):
         self.Default(fsm)
 
@@ -51,57 +48,10 @@ class NFSPath_Default(NFSPathParserState):
         fsm.clearState()
         try:
             ctxt.reportError()
+            ctxt.clearallbuf()
         finally:
             fsm.setState(NFSPath.Invalid)
             fsm.getState().Entry(fsm)
-
-
-    def Letter(self, fsm, x):
-        fsm.getState().Exit(fsm)
-        fsm.setState(NFSPath.Invalid)
-        fsm.getState().Entry(fsm)
-
-
-    def Digit(self, fsm, x):
-        fsm.getState().Exit(fsm)
-        fsm.setState(NFSPath.Invalid)
-        fsm.getState().Entry(fsm)
-
-
-    def Slash(self, fsm):
-        fsm.getState().Exit(fsm)
-        fsm.setState(NFSPath.Invalid)
-        fsm.getState().Entry(fsm)
-
-
-    def Colon(self, fsm):
-        fsm.getState().Exit(fsm)
-        fsm.setState(NFSPath.Invalid)
-        fsm.getState().Entry(fsm)
-
-
-    def EOS(self, fsm):
-        fsm.getState().Exit(fsm)
-        fsm.setState(NFSPath.Invalid)
-        fsm.getState().Entry(fsm)
-
-
-    def n(self, fsm):
-        fsm.getState().Exit(fsm)
-        fsm.setState(NFSPath.Invalid)
-        fsm.getState().Entry(fsm)
-
-
-    def f(self, fsm):
-        fsm.getState().Exit(fsm)
-        fsm.setState(NFSPath.Invalid)
-        fsm.getState().Entry(fsm)
-
-
-    def s(self, fsm):
-        fsm.getState().Exit(fsm)
-        fsm.setState(NFSPath.Invalid)
-        fsm.getState().Entry(fsm)
 
 
 class NFSPath_Start(NFSPath_Default):
@@ -234,11 +184,11 @@ class NFSPath_ServerName(NFSPath_Default):
             ctxt.recordServerName()
             ctxt.clearbuf()
         finally:
-            fsm.setState(NFSPath.FirstSlash)
+            fsm.setState(NFSPath.CatalogStart)
             fsm.getState().Entry(fsm)
 
 
-class NFSPath_FirstSlash(NFSPath_Default):
+class NFSPath_CatalogStart(NFSPath_Default):
 
     def Default(self, fsm):
         fsm.getState().Exit(fsm)
@@ -253,16 +203,27 @@ class NFSPath_FirstSlash(NFSPath_Default):
         try:
             ctxt.addtobuf(x)
         finally:
-            fsm.setState(NFSPath.FirstDirName)
+            fsm.setState(NFSPath.CatalogName)
             fsm.getState().Entry(fsm)
 
 
-class NFSPath_FirstDirName(NFSPath_Default):
+class NFSPath_CatalogName(NFSPath_Default):
 
     def Default(self, fsm):
         fsm.getState().Exit(fsm)
         fsm.setState(NFSPath.Invalid)
         fsm.getState().Entry(fsm)
+
+
+    def EOS(self, fsm):
+        ctxt = fsm.getOwner()
+        fsm.getState().Exit(fsm)
+        fsm.clearState()
+        try:
+            ctxt.validatePath()
+        finally:
+            fsm.setState(NFSPath.Done)
+            fsm.getState().Entry(fsm)
 
 
     def Letter(self, fsm, x):
@@ -272,7 +233,7 @@ class NFSPath_FirstDirName(NFSPath_Default):
         try:
             ctxt.addtobuf(x)
         finally:
-            fsm.setState(NFSPath.FirstDirName)
+            fsm.setState(NFSPath.CatalogName)
             fsm.getState().Entry(fsm)
 
 
@@ -281,14 +242,13 @@ class NFSPath_FirstDirName(NFSPath_Default):
         fsm.getState().Exit(fsm)
         fsm.clearState()
         try:
-            ctxt.recordFirstDir()
             ctxt.clearbuf()
         finally:
-            fsm.setState(NFSPath.SecondSlash)
+            fsm.setState(NFSPath.AfterCatalog)
             fsm.getState().Entry(fsm)
 
 
-class NFSPath_SecondSlash(NFSPath_Default):
+class NFSPath_AfterCatalog(NFSPath_Default):
 
     def Default(self, fsm):
         fsm.getState().Exit(fsm)
@@ -314,11 +274,11 @@ class NFSPath_SecondSlash(NFSPath_Default):
         try:
             ctxt.addtobuf(x)
         finally:
-            fsm.setState(NFSPath.AdditionalDir)
+            fsm.setState(NFSPath.PathSegment)
             fsm.getState().Entry(fsm)
 
 
-class NFSPath_AdditionalDir(NFSPath_Default):
+class NFSPath_PathSegment(NFSPath_Default):
 
     def Default(self, fsm):
         fsm.getState().Exit(fsm)
@@ -344,7 +304,7 @@ class NFSPath_AdditionalDir(NFSPath_Default):
         try:
             ctxt.addtobuf(x)
         finally:
-            fsm.setState(NFSPath.AdditionalDir)
+            fsm.setState(NFSPath.PathSegment)
             fsm.getState().Entry(fsm)
 
 
@@ -356,37 +316,7 @@ class NFSPath_AdditionalDir(NFSPath_Default):
             ctxt.recordDirPath()
             ctxt.clearbuf()
         finally:
-            fsm.setState(NFSPath.AdditionalSlash)
-            fsm.getState().Entry(fsm)
-
-
-class NFSPath_AdditionalSlash(NFSPath_Default):
-
-    def Default(self, fsm):
-        fsm.getState().Exit(fsm)
-        fsm.setState(NFSPath.Invalid)
-        fsm.getState().Entry(fsm)
-
-
-    def EOS(self, fsm):
-        ctxt = fsm.getOwner()
-        fsm.getState().Exit(fsm)
-        fsm.clearState()
-        try:
-            ctxt.validatePath()
-        finally:
-            fsm.setState(NFSPath.Done)
-            fsm.getState().Entry(fsm)
-
-
-    def Letter(self, fsm, x):
-        ctxt = fsm.getOwner()
-        fsm.getState().Exit(fsm)
-        fsm.clearState()
-        try:
-            ctxt.addtobuf(x)
-        finally:
-            fsm.setState(NFSPath.AdditionalDir)
+            fsm.setState(NFSPath.AfterCatalog)
             fsm.getState().Entry(fsm)
 
 
@@ -394,13 +324,18 @@ class NFSPath_Done(NFSPath_Default):
 
     def EOS(self, fsm):
         ctxt = fsm.getOwner()
-        endState = fsm.getState()
+        fsm.getState().Exit(fsm)
         fsm.clearState()
         try:
+            ctxt.nil()
             ctxt.clearallbuf()
         finally:
-            fsm.setState(endState)
+            fsm.setState(NFSPath.Accept)
+            fsm.getState().Entry(fsm)
 
+
+class NFSPath_Accept(NFSPath_Default):
+    pass
 
 class NFSPath_Invalid(NFSPath_Default):
 
@@ -410,6 +345,7 @@ class NFSPath_Invalid(NFSPath_Default):
         fsm.clearState()
         try:
             ctxt.reportError()
+            ctxt.clearallbuf()
         finally:
             fsm.setState(NFSPath.Invalid)
             fsm.getState().Entry(fsm)
@@ -425,12 +361,12 @@ class NFSPath(object):
     Protocol_Slash1 = NFSPath_Protocol_Slash1('NFSPath.Protocol_Slash1', 5)
     Protocol_Slash2 = NFSPath_Protocol_Slash2('NFSPath.Protocol_Slash2', 6)
     ServerName = NFSPath_ServerName('NFSPath.ServerName', 7)
-    FirstSlash = NFSPath_FirstSlash('NFSPath.FirstSlash', 8)
-    FirstDirName = NFSPath_FirstDirName('NFSPath.FirstDirName', 9)
-    SecondSlash = NFSPath_SecondSlash('NFSPath.SecondSlash', 10)
-    AdditionalDir = NFSPath_AdditionalDir('NFSPath.AdditionalDir', 11)
-    AdditionalSlash = NFSPath_AdditionalSlash('NFSPath.AdditionalSlash', 12)
-    Done = NFSPath_Done('NFSPath.Done', 13)
+    CatalogStart = NFSPath_CatalogStart('NFSPath.CatalogStart', 8)
+    CatalogName = NFSPath_CatalogName('NFSPath.CatalogName', 9)
+    AfterCatalog = NFSPath_AfterCatalog('NFSPath.AfterCatalog', 10)
+    PathSegment = NFSPath_PathSegment('NFSPath.PathSegment', 11)
+    Done = NFSPath_Done('NFSPath.Done', 12)
+    Accept = NFSPath_Accept('NFSPath.Accept', 13)
     Invalid = NFSPath_Invalid('NFSPath.Invalid', 14)
     Default = NFSPath_Default('NFSPath.Default', -1)
 

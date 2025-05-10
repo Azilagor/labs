@@ -1,0 +1,10 @@
+nfs://Server/photos/
+nfs://Alpha/alpha/backupbackuplib
+nfs://Lib/project/photosgammaimages/
+nfs://Photos/lib/backupbackup/
+nfs://Photos/photos/photos/images/alpha
+nfs://Images/alpha/alpha/alpha/images/alpha
+nfs://Server/images/lib/images/
+nfs://Lib/backup/alpha/data/backup/
+nfs://Lib/gamma/imagesgammaalpha/
+nfs://Server/gamma/
