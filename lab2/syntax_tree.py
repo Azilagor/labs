@@ -63,7 +63,7 @@ class SyntaxTree:
                 self.alphabet.add(token)
                 self.id_counter += 1
             stack.append(node)
-
+        print(">>> Стек после основного разбора:", stack)
         
         end_node = Node('leaf', '#', id=self.id_counter)
         self.leaves[self.id_counter] = '#'
