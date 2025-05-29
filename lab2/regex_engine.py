@@ -11,6 +11,13 @@ class Regex:
         self.compiled = False
 
     def compile(self):
+        tokens = tokenize(self.pattern) 
+        print("Токены:", tokens)
+        tokens_with_concat = insert_concat(tokens)
+        print("С конкатенацией:", insert_concat(tokens))
+        postfix = to_postfix(tokens_with_concat)
+        print("Постфикс:", to_postfix(insert_concat(tokens)))
+
         tokens = to_postfix(insert_concat(tokenize(self.pattern)))
         self.tree = SyntaxTree(tokens)
 

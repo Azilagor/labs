@@ -18,6 +18,8 @@ class SyntaxTree:
         self.id_counter = 1
 
         self.root = self.build_tree(postfix_tokens)
+        if self.root is None:
+             raise ValueError("Ошибка построения дерева разбора (неправильная регулярка?)")
         self.compute_nullable_first_last_follow(self.root)
         
     def build_tree(self, tokens):
@@ -69,6 +71,9 @@ class SyntaxTree:
         self.alphabet.add('#')
         self.id_counter += 1
 
+
+        if len(stack) != 1:
+            raise ValueError("Ошибка парсинга: стек не пуст после построения дерева.")
         root = Node('concat', '.', stack.pop(), end_node)
         return root
 
