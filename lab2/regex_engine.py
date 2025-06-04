@@ -1,15 +1,26 @@
 from regex_parser import tokenize, insert_concat, to_postfix
 from syntax_tree import SyntaxTree
-from nfa_dfa import DFA
+from nfa_dfa import DFA 
 from dfa_min import DFAOptimizer, intersect, difference
 
 class Regex:
     def __init__(self, pattern: str):
+        if pattern == "":
+            raise ValueError("Пустой шаблон запрещён для обычного конструктора. Используйте from_dfa.")\
+        
         self.pattern = pattern
         self.dfa = None
         self.tree = None
         self.compiled = False
 
+    def from_dfa(cls, dfa):
+        obj = cls.__new__(cls)
+        obj.dfa = dfa
+        obj.compiled = True
+        obj.tree = None
+        obj.pattern = None
+        return obj
+    
     def compile(self):
         tokens = tokenize(self.pattern) 
         print("Токены:", tokens)
@@ -38,15 +49,9 @@ class Regex:
     def intersect(self, other: 'Regex') -> 'Regex':
         if not self.compiled or not other.compiled:
             raise ValueError("Both Regex must be compiled before intersection.")
-        new_regex = Regex("")
-        new_regex.dfa = intersect(self.dfa, other.dfa)
-        new_regex.compiled = True
-        return new_regex
+        return Regex.from_dfa(intersect(self.dfa, other.dfa))
 
     def difference(self, other: 'Regex') -> 'Regex':
         if not self.compiled or not other.compiled:
             raise ValueError("Both Regex must be compiled before difference.")
-        new_regex = Regex("")
-        new_regex.dfa = difference(self.dfa, other.dfa)
-        new_regex.compiled = True
-        return new_regex
+        return Regex.from_dfa(difference(self.dfa, other.dfa))

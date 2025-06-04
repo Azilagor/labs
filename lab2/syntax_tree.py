@@ -44,6 +44,7 @@ class SyntaxTree:
                 self.id_counter += 1
                 node = Node('or', '|', base, epsilon)
             elif token.startswith("{") and token.endswith("}"):
+                # ----- Обработка повторов -----
                 body = token[1:-1]
                 if ',' in body:
                     parts = body.split(',')
@@ -56,6 +57,26 @@ class SyntaxTree:
                     min_count = max_count = int(body)
                 else:
                     raise ValueError(f"Неверный формат повторения: {token}")
+
+                base = stack.pop()
+                # n обязательных копий
+                if min_count == 0:
+                    node = Node('leaf', '$', id=self.id_counter)
+                    self.leaves[self.id_counter] = '$'
+                    self.followpos[self.id_counter] = set()
+                    self.id_counter += 1
+                else:
+                    node = self.clone(base)
+                    for _ in range(min_count - 1):
+                        node = Node('concat', '.', self.clone(base), node)
+                # (m-n) опциональных копий (через or с epsilon)
+                for _ in range(max_count - min_count):
+                    epsilon = Node('leaf', '$', id=self.id_counter)
+                    self.leaves[self.id_counter] = '$'
+                    self.followpos[self.id_counter] = set()
+                    self.id_counter += 1
+                    opt = Node('or', '|', self.clone(base), epsilon)
+                    node = Node('concat', '.', node, opt)
             else:
                 node = Node('leaf', token, id=self.id_counter)
                 self.leaves[self.id_counter] = token
@@ -63,19 +84,23 @@ class SyntaxTree:
                 self.alphabet.add(token)
                 self.id_counter += 1
             stack.append(node)
+
         print(">>> Стек после основного разбора:", stack)
-        
+
+        if len(stack) != 1:
+            raise ValueError("Ошибка парсинга: стек не пуст после построения дерева.")
+        main_node = stack.pop()
+
+        # Добавляем служебный символ #
         end_node = Node('leaf', '#', id=self.id_counter)
         self.leaves[self.id_counter] = '#'
         self.followpos[self.id_counter] = set()
         self.alphabet.add('#')
         self.id_counter += 1
 
-
-        if len(stack) != 1:
-            raise ValueError("Ошибка парсинга: стек не пуст после построения дерева.")
-        root = Node('concat', '.', stack.pop(), end_node)
+        root = Node('concat', '.', main_node, end_node)
         return root
+
 
     def compute_nullable_first_last_follow(self, node):
         if node is None:

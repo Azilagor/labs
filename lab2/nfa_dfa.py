@@ -12,6 +12,8 @@ class DFAState:
 
 class DFA:
     def __init__(self, syntax_tree: SyntaxTree):
+        print('Передан syntax_tree:', syntax_tree)
+        print('root:', getattr(syntax_tree, "root", None))
         if syntax_tree is None or syntax_tree.root is None:
             raise ValueError("Регулярное выражение не скомпилировано: дерево разбора отсутствует.")
         self.alphabet = syntax_tree.alphabet - {'$'}  # исключаем ε
