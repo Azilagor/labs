@@ -5,9 +5,8 @@ class DFAOptimizer:
     def __init__(self, dfa):
         self.original_dfa = dfa
         self.alphabet = dfa.alphabet
-    
+
     def minimize(self):
-        
         partitions = [
             [s for s in self.original_dfa.states if not s.is_final],
             [s for s in self.original_dfa.states if s.is_final]
@@ -48,11 +47,12 @@ class DFAOptimizer:
                     repr_target = partitions[target_index][0]
                     current.transitions[c] = state_map[id(repr_target)]
 
-        minimized = type(self.original_dfa)(None)
+        # Создаём пустой объект DFA, НЕ вызывая __init__!
+        minimized = object.__new__(type(self.original_dfa))
         minimized.states = list(state_map.values())
         minimized.alphabet = self.alphabet
         return minimized
-    
+
     def get_partition_index(self, state, partitions):
         for i, group in enumerate(partitions):
             if state in group:
@@ -61,12 +61,9 @@ class DFAOptimizer:
 
 
 def intersect(dfa1, dfa2):
-    
     start_pair = (dfa1.states[0], dfa2.states[0])
     visited = {}
     queue = deque([start_pair])
-
-    result_states = []
     state_map = {}
 
     def get_state_id(a, b):
@@ -78,7 +75,6 @@ def intersect(dfa1, dfa2):
         if key in visited:
             continue
         new_state = DFAState(set(), len(visited) + 1, s1.is_final and s2.is_final)
-        result_states.append(new_state)
         visited[key] = new_state
         state_map[key] = new_state
 
@@ -96,11 +92,12 @@ def intersect(dfa1, dfa2):
                 if target:
                     state.transitions[c] = target
 
-    result_dfa = type(dfa1)(None)
+    # Создаём пустой объект DFA без вызова __init__
+    result_dfa = object.__new__(type(dfa1))
     result_dfa.states = list(visited.values())
     result_dfa.alphabet = dfa1.alphabet & dfa2.alphabet
     return result_dfa
-    
+
 def complement(dfa):
     for state in dfa.states:
         state.is_final = not state.is_final
