@@ -85,7 +85,7 @@ class SyntaxTree:
                 self.id_counter += 1
             stack.append(node)
 
-        print(">>> Стек после основного разбора:", stack)
+    #    print(">>> Стек после основного разбора:", stack)
 
         if len(stack) != 1:
             raise ValueError("Ошибка парсинга: стек не пуст после построения дерева.")

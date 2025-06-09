@@ -1,4 +1,5 @@
 from regex_engine import Regex
+from nfa_dfa import DFA
 
 def print_menu():
     print("\n=== Регулярное выражение: Меню ===")
@@ -19,8 +20,11 @@ def main():
             pattern = input("Введите регулярное выражение: ")
             try:
                 regex = Regex(pattern).compile()
+                regex.dfa.print_dfa_console()
+                
                 print(" Выражение успешно скомпилировано.")
                 restored = regex.dfa.to_regex()
+                
                 print("\n Восстановленная регулярка по автомату:", restored)
             except Exception as e:
                 print("Ошибка компиляции:", e)
