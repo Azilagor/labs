@@ -1,0 +1,411 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    BACKWARD
+    BOOL
+    BOX
+    CELL
+    COLON
+    COMMA
+    DIVIDE
+    DROP
+    ELDEF
+    ELUND
+    EMPTY
+    EQ
+    EXIT
+    FALSE
+    FINISH
+    GT
+    HASH
+    HEXNUMBER
+    IF
+    INF
+    INT
+    LBRACKET
+    LEFT
+    LOAD
+    LOOK
+    LT
+    MINUS
+    MINUS_INF
+    NAN
+    PLUS
+    RBRACKET
+    RETURN
+    RIGHT
+    TEST
+    TIMES
+    TRUE
+    UNDEF
+    WALL
+    WHILE
+    XOR
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> function_list
+Rule 2     function_list -> function_list function
+Rule 3     function_list -> function
+Rule 4     function -> FUNCTION ID LPAREN ID RPAREN DO statements DONE
+Rule 5     function -> MAIN LPAREN ID RPAREN DO statements DONE
+Rule 6     statements -> statements statement
+Rule 7     statements -> statement
+Rule 8     statement -> VAR ID ASSIGN NUMBER
+Rule 9     statement -> ID ASSIGN NUMBER
+Rule 10    statement -> FORWARD NUMBER
+
+Terminals, with rules where they appear
+
+ASSIGN               : 8 9
+BACKWARD             : 
+BOOL                 : 
+BOX                  : 
+CELL                 : 
+COLON                : 
+COMMA                : 
+DIVIDE               : 
+DO                   : 4 5
+DONE                 : 4 5
+DROP                 : 
+ELDEF                : 
+ELUND                : 
+EMPTY                : 
+EQ                   : 
+EXIT                 : 
+FALSE                : 
+FINISH               : 
+FORWARD              : 10
+FUNCTION             : 4
+GT                   : 
+HASH                 : 
+HEXNUMBER            : 
+ID                   : 4 4 5 8 9
+IF                   : 
+INF                  : 
+INT                  : 
+LBRACKET             : 
+LEFT                 : 
+LOAD                 : 
+LOOK                 : 
+LPAREN               : 4 5
+LT                   : 
+MAIN                 : 5
+MINUS                : 
+MINUS_INF            : 
+NAN                  : 
+NUMBER               : 8 9 10
+PLUS                 : 
+RBRACKET             : 
+RETURN               : 
+RIGHT                : 
+RPAREN               : 4 5
+TEST                 : 
+TIMES                : 
+TRUE                 : 
+UNDEF                : 
+VAR                  : 8
+WALL                 : 
+WHILE                : 
+XOR                  : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+function             : 2 3
+function_list        : 1 2
+program              : 0
+statement            : 6 7
+statements           : 4 5 6
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . function_list
+    (2) function_list -> . function_list function
+    (3) function_list -> . function
+    (4) function -> . FUNCTION ID LPAREN ID RPAREN DO statements DONE
+    (5) function -> . MAIN LPAREN ID RPAREN DO statements DONE
+
+    FUNCTION        shift and go to state 4
+    MAIN            shift and go to state 5
+
+    program                        shift and go to state 1
+    function_list                  shift and go to state 2
+    function                       shift and go to state 3
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> function_list .
+    (2) function_list -> function_list . function
+    (4) function -> . FUNCTION ID LPAREN ID RPAREN DO statements DONE
+    (5) function -> . MAIN LPAREN ID RPAREN DO statements DONE
+
+    $end            reduce using rule 1 (program -> function_list .)
+    FUNCTION        shift and go to state 4
+    MAIN            shift and go to state 5
+
+    function                       shift and go to state 6
+
+state 3
+
+    (3) function_list -> function .
+
+    FUNCTION        reduce using rule 3 (function_list -> function .)
+    MAIN            reduce using rule 3 (function_list -> function .)
+    $end            reduce using rule 3 (function_list -> function .)
+
+
+state 4
+
+    (4) function -> FUNCTION . ID LPAREN ID RPAREN DO statements DONE
+
+    ID              shift and go to state 7
+
+
+state 5
+
+    (5) function -> MAIN . LPAREN ID RPAREN DO statements DONE
+
+    LPAREN          shift and go to state 8
+
+
+state 6
+
+    (2) function_list -> function_list function .
+
+    FUNCTION        reduce using rule 2 (function_list -> function_list function .)
+    MAIN            reduce using rule 2 (function_list -> function_list function .)
+    $end            reduce using rule 2 (function_list -> function_list function .)
+
+
+state 7
+
+    (4) function -> FUNCTION ID . LPAREN ID RPAREN DO statements DONE
+
+    LPAREN          shift and go to state 9
+
+
+state 8
+
+    (5) function -> MAIN LPAREN . ID RPAREN DO statements DONE
+
+    ID              shift and go to state 10
+
+
+state 9
+
+    (4) function -> FUNCTION ID LPAREN . ID RPAREN DO statements DONE
+
+    ID              shift and go to state 11
+
+
+state 10
+
+    (5) function -> MAIN LPAREN ID . RPAREN DO statements DONE
+
+    RPAREN          shift and go to state 12
+
+
+state 11
+
+    (4) function -> FUNCTION ID LPAREN ID . RPAREN DO statements DONE
+
+    RPAREN          shift and go to state 13
+
+
+state 12
+
+    (5) function -> MAIN LPAREN ID RPAREN . DO statements DONE
+
+    DO              shift and go to state 14
+
+
+state 13
+
+    (4) function -> FUNCTION ID LPAREN ID RPAREN . DO statements DONE
+
+    DO              shift and go to state 15
+
+
+state 14
+
+    (5) function -> MAIN LPAREN ID RPAREN DO . statements DONE
+    (6) statements -> . statements statement
+    (7) statements -> . statement
+    (8) statement -> . VAR ID ASSIGN NUMBER
+    (9) statement -> . ID ASSIGN NUMBER
+    (10) statement -> . FORWARD NUMBER
+
+    VAR             shift and go to state 19
+    ID              shift and go to state 16
+    FORWARD         shift and go to state 20
+
+    statements                     shift and go to state 17
+    statement                      shift and go to state 18
+
+state 15
+
+    (4) function -> FUNCTION ID LPAREN ID RPAREN DO . statements DONE
+    (6) statements -> . statements statement
+    (7) statements -> . statement
+    (8) statement -> . VAR ID ASSIGN NUMBER
+    (9) statement -> . ID ASSIGN NUMBER
+    (10) statement -> . FORWARD NUMBER
+
+    VAR             shift and go to state 19
+    ID              shift and go to state 16
+    FORWARD         shift and go to state 20
+
+    statements                     shift and go to state 21
+    statement                      shift and go to state 18
+
+state 16
+
+    (9) statement -> ID . ASSIGN NUMBER
+
+    ASSIGN          shift and go to state 22
+
+
+state 17
+
+    (5) function -> MAIN LPAREN ID RPAREN DO statements . DONE
+    (6) statements -> statements . statement
+    (8) statement -> . VAR ID ASSIGN NUMBER
+    (9) statement -> . ID ASSIGN NUMBER
+    (10) statement -> . FORWARD NUMBER
+
+    DONE            shift and go to state 23
+    VAR             shift and go to state 19
+    ID              shift and go to state 16
+    FORWARD         shift and go to state 20
+
+    statement                      shift and go to state 24
+
+state 18
+
+    (7) statements -> statement .
+
+    DONE            reduce using rule 7 (statements -> statement .)
+    VAR             reduce using rule 7 (statements -> statement .)
+    ID              reduce using rule 7 (statements -> statement .)
+    FORWARD         reduce using rule 7 (statements -> statement .)
+
+
+state 19
+
+    (8) statement -> VAR . ID ASSIGN NUMBER
+
+    ID              shift and go to state 25
+
+
+state 20
+
+    (10) statement -> FORWARD . NUMBER
+
+    NUMBER          shift and go to state 26
+
+
+state 21
+
+    (4) function -> FUNCTION ID LPAREN ID RPAREN DO statements . DONE
+    (6) statements -> statements . statement
+    (8) statement -> . VAR ID ASSIGN NUMBER
+    (9) statement -> . ID ASSIGN NUMBER
+    (10) statement -> . FORWARD NUMBER
+
+    DONE            shift and go to state 27
+    VAR             shift and go to state 19
+    ID              shift and go to state 16
+    FORWARD         shift and go to state 20
+
+    statement                      shift and go to state 24
+
+state 22
+
+    (9) statement -> ID ASSIGN . NUMBER
+
+    NUMBER          shift and go to state 28
+
+
+state 23
+
+    (5) function -> MAIN LPAREN ID RPAREN DO statements DONE .
+
+    FUNCTION        reduce using rule 5 (function -> MAIN LPAREN ID RPAREN DO statements DONE .)
+    MAIN            reduce using rule 5 (function -> MAIN LPAREN ID RPAREN DO statements DONE .)
+    $end            reduce using rule 5 (function -> MAIN LPAREN ID RPAREN DO statements DONE .)
+
+
+state 24
+
+    (6) statements -> statements statement .
+
+    DONE            reduce using rule 6 (statements -> statements statement .)
+    VAR             reduce using rule 6 (statements -> statements statement .)
+    ID              reduce using rule 6 (statements -> statements statement .)
+    FORWARD         reduce using rule 6 (statements -> statements statement .)
+
+
+state 25
+
+    (8) statement -> VAR ID . ASSIGN NUMBER
+
+    ASSIGN          shift and go to state 29
+
+
+state 26
+
+    (10) statement -> FORWARD NUMBER .
+
+    DONE            reduce using rule 10 (statement -> FORWARD NUMBER .)
+    VAR             reduce using rule 10 (statement -> FORWARD NUMBER .)
+    ID              reduce using rule 10 (statement -> FORWARD NUMBER .)
+    FORWARD         reduce using rule 10 (statement -> FORWARD NUMBER .)
+
+
+state 27
+
+    (4) function -> FUNCTION ID LPAREN ID RPAREN DO statements DONE .
+
+    FUNCTION        reduce using rule 4 (function -> FUNCTION ID LPAREN ID RPAREN DO statements DONE .)
+    MAIN            reduce using rule 4 (function -> FUNCTION ID LPAREN ID RPAREN DO statements DONE .)
+    $end            reduce using rule 4 (function -> FUNCTION ID LPAREN ID RPAREN DO statements DONE .)
+
+
+state 28
+
+    (9) statement -> ID ASSIGN NUMBER .
+
+    DONE            reduce using rule 9 (statement -> ID ASSIGN NUMBER .)
+    VAR             reduce using rule 9 (statement -> ID ASSIGN NUMBER .)
+    ID              reduce using rule 9 (statement -> ID ASSIGN NUMBER .)
+    FORWARD         reduce using rule 9 (statement -> ID ASSIGN NUMBER .)
+
+
+state 29
+
+    (8) statement -> VAR ID ASSIGN . NUMBER
+
+    NUMBER          shift and go to state 30
+
+
+state 30
+
+    (8) statement -> VAR ID ASSIGN NUMBER .
+
+    DONE            reduce using rule 8 (statement -> VAR ID ASSIGN NUMBER .)
+    VAR             reduce using rule 8 (statement -> VAR ID ASSIGN NUMBER .)
+    ID              reduce using rule 8 (statement -> VAR ID ASSIGN NUMBER .)
+    FORWARD         reduce using rule 8 (statement -> VAR ID ASSIGN NUMBER .)
+
