@@ -13,6 +13,7 @@ class Regex:
         self.tree = None
         self.compiled = False
 
+    @classmethod
     def from_dfa(cls, dfa):
         obj = cls.__new__(cls)
         obj.dfa = dfa

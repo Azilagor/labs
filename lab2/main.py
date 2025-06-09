@@ -20,6 +20,8 @@ def main():
             try:
                 regex = Regex(pattern).compile()
                 print(" Выражение успешно скомпилировано.")
+                restored = regex.dfa.to_regex()
+                print("\n Восстановленная регулярка по автомату:", restored)
             except Exception as e:
                 print("Ошибка компиляции:", e)
 
