@@ -23,24 +23,27 @@ class Regex:
         return obj
     
     def compile(self):
-        tokens = tokenize(self.pattern) 
-    #    print("Токены:", tokens)
+        tokens = tokenize(self.pattern)
         tokens_with_concat = insert_concat(tokens)
-    #    print("С конкатенацией:", insert_concat(tokens))
         postfix = to_postfix(tokens_with_concat)
-    #    print("Постфикс:", to_postfix(insert_concat(tokens)))
 
-        tokens = to_postfix(insert_concat(tokenize(self.pattern)))
-        self.tree = SyntaxTree(tokens)
-
+        self.tree = SyntaxTree(postfix)
         if self.tree.root is None:
             raise ValueError("Ошибка построения дерева: root is None")
 
+        original_dfa = DFA(self.tree)
+        minimized_dfa = DFAOptimizer(original_dfa).minimize()
 
-        self.dfa = DFA(self.tree)
-        self.dfa = DFAOptimizer(self.dfa).minimize()
+        # 🔁 Критически важный момент — перенос нужных данных
+        minimized_dfa.alphabet = original_dfa.alphabet
+        minimized_dfa.leaves = original_dfa.leaves
+        minimized_dfa.terminal = original_dfa.terminal
+        minimized_dfa.followpos = original_dfa.followpos
+
+        self.dfa = minimized_dfa
         self.compiled = True
         return self
+
 
     def match(self, text: str) -> bool:
         if not self.compiled:
