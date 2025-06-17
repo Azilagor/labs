@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'ASSIGN BACKWARD BOOL BOX CELL COLON COMMA DIVIDE DO DONE DROP ELDEF ELUND EMPTY EQ EXIT FALSE FINISH FORWARD FUNCTION GT HASH HEXNUMBER ID IF INF INT LBRACKET LEFT LOAD LOOK LPAREN LT MAIN MINUS MINUS_INF NAN NUMBER PLUS RBRACKET RETURN RIGHT RPAREN TEST TIMES TRUE UNDEF VAR WALL WHILE XORprogram : function_listfunction_list : function_list function\n                     | functionfunction : FUNCTION ID LPAREN ID RPAREN DO statements DONEfunction : MAIN LPAREN ID RPAREN DO statements DONEstatements : statements statement\n                  | statementstatement : VAR ID ASSIGN NUMBERstatement : ID ASSIGN NUMBERstatement : FORWARD NUMBER'
+_lr_signature = 'rightASSIGNleftPLUSMINUSleftTIMESDIVIDErightUMINUSASSIGN BACKWARD BOOL BOX CELL COLON COMMA DIVIDE DO DONE DROP ELDEF ELUND EMPTY EQ EXIT FALSE FINISH FORWARD FUNCTION GT HASH HEXNUMBER ID IF INF INT LBRACKET LEFT LOAD LOOK LPAREN LT MAIN MINUS MINUS_INF NAN NUMBER PLUS RBRACKET RETURN RIGHT RPAREN TEST TIMES TRUE UNDEF VAR WALL WHILE XORprogram : function_listfunction_list : function_list function\n                     | functionfunction : FUNCTION ID LPAREN ID RPAREN DO statements DONEfunction : MAIN LPAREN ID RPAREN DO statements DONEstatements : statements statement\n                  | statementstatement : VAR ID ASSIGN NUMBERstatement : ID ASSIGN expression\n                 | ID LPAREN expression RPAREN ASSIGN expressionstatement : FORWARD NUMBERstatement : VAR ID\n                 | VAR ID LPAREN NUMBER RPARENvar_ref : ID\n               | ID LPAREN expression RPARENexpression : expression PLUS expression\n                  | expression MINUS expression\n                  | expression TIMES expression\n                  | expression DIVIDE expressionexpression : MINUS expression %prec UMINUSexpression : NUMBERexpression : var_refstatement : IF condition DO statements DONE\n                 | IF condition DO statements DONE ELDEF DO statements DONE\n                 | IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONEcondition : expression LT expression\n                 | expression GT expression\n                 | expression EQ expressionstatement : WHILE condition DO statements DONE\n                 | WHILE condition DO statements FINISH statements DONEstatement : RETURN\n                 | RETURN expression'
     
-_lr_action_items = {'FUNCTION':([0,2,3,6,23,27,],[4,4,-3,-2,-5,-4,]),'MAIN':([0,2,3,6,23,27,],[5,5,-3,-2,-5,-4,]),'$end':([1,2,3,6,23,27,],[0,-1,-3,-2,-5,-4,]),'ID':([4,8,9,14,15,17,18,19,21,24,26,28,30,],[7,10,11,16,16,16,-7,25,16,-6,-10,-9,-8,]),'LPAREN':([5,7,],[8,9,]),'RPAREN':([10,11,],[12,13,]),'DO':([12,13,],[14,15,]),'VAR':([14,15,17,18,21,24,26,28,30,],[19,19,19,-7,19,-6,-10,-9,-8,]),'FORWARD':([14,15,17,18,21,24,26,28,30,],[20,20,20,-7,20,-6,-10,-9,-8,]),'ASSIGN':([16,25,],[22,29,]),'DONE':([17,18,21,24,26,28,30,],[23,-7,27,-6,-10,-9,-8,]),'NUMBER':([20,22,29,],[26,28,30,]),}
+_lr_action_items = {'FUNCTION':([0,2,3,6,27,39,],[4,4,-3,-2,-5,-4,]),'MAIN':([0,2,3,6,27,39,],[5,5,-3,-2,-5,-4,]),'$end':([1,2,3,6,27,39,],[0,-1,-3,-2,-5,-4,]),'ID':([4,8,9,14,15,17,18,19,21,22,23,24,25,26,28,29,30,33,34,35,36,38,40,44,45,46,47,48,49,50,51,52,53,54,56,58,62,63,64,65,67,68,69,70,71,72,73,74,76,77,78,79,80,82,83,84,],[7,10,11,16,16,16,-7,29,36,36,36,16,36,36,-6,-12,-11,36,-21,-22,-14,-32,-9,16,36,36,36,36,36,36,36,-20,36,16,-8,16,-16,-17,-18,-19,16,36,-13,-23,-15,-29,16,-10,16,16,-30,16,-24,16,16,-25,]),'LPAREN':([5,7,16,29,36,],[8,9,26,43,53,]),'RPAREN':([10,11,34,35,36,41,52,57,62,63,64,65,66,71,],[12,13,-21,-22,-14,55,-20,69,-16,-17,-18,-19,71,-15,]),'DO':([12,13,31,34,35,36,37,52,59,60,61,62,63,64,65,71,75,81,],[14,15,44,-21,-22,-14,54,-20,-26,-27,-28,-16,-17,-18,-19,-15,77,82,]),'VAR':([14,15,17,18,23,24,28,29,30,34,35,36,38,40,44,52,54,56,58,62,63,64,65,67,69,70,71,72,73,74,76,77,78,79,80,82,83,84,],[19,19,19,-7,-31,19,-6,-12,-11,-21,-22,-14,-32,-9,19,-20,19,-8,19,-16,-17,-18,-19,19,-13,-23,-15,-29,19,-10,19,19,-30,19,-24,19,19,-25,]),'FORWARD':([14,15,17,18,23,24,28,29,30,34,35,36,38,40,44,52,54,56,58,62,63,64,65,67,69,70,71,72,73,74,76,77,78,79,80,82,83,84,],[20,20,20,-7,-31,20,-6,-12,-11,-21,-22,-14,-32,-9,20,-20,20,-8,20,-16,-17,-18,-19,20,-13,-23,-15,-29,20,-10,20,20,-30,20,-24,20,20,-25,]),'IF':([14,15,17,18,23,24,28,29,30,34,35,36,38,40,44,52,54,56,58,62,63,64,65,67,69,70,71,72,73,74,76,77,78,79,80,82,83,84,],[21,21,21,-7,-31,21,-6,-12,-11,-21,-22,-14,-32,-9,21,-20,21,-8,21,-16,-17,-18,-19,21,-13,-23,-15,-29,21,-10,21,21,-30,21,-24,21,21,-25,]),'WHILE':([14,15,17,18,23,24,28,29,30,34,35,36,38,40,44,52,54,56,58,62,63,64,65,67,69,70,71,72,73,74,76,77,78,79,80,82,83,84,],[22,22,22,-7,-31,22,-6,-12,-11,-21,-22,-14,-32,-9,22,-20,22,-8,22,-16,-17,-18,-19,22,-13,-23,-15,-29,22,-10,22,22,-30,22,-24,22,22,-25,]),'RETURN':([14,15,17,18,23,24,28,29,30,34,35,36,38,40,44,52,54,56,58,62,63,64,65,67,69,70,71,72,73,74,76,77,78,79,80,82,83,84,],[23,23,23,-7,-31,23,-6,-12,-11,-21,-22,-14,-32,-9,23,-20,23,-8,23,-16,-17,-18,-19,23,-13,-23,-15,-29,23,-10,23,23,-30,23,-24,23,23,-25,]),'ASSIGN':([16,29,55,],[25,42,68,]),'DONE':([17,18,23,24,28,29,30,34,35,36,38,40,52,56,58,62,63,64,65,67,69,70,71,72,74,76,78,79,80,83,84,],[27,-7,-31,39,-6,-12,-11,-21,-22,-14,-32,-9,-20,-8,70,-16,-17,-18,-19,72,-13,-23,-15,-29,-10,78,-30,80,-24,84,-25,]),'FINISH':([18,23,28,29,30,34,35,36,38,40,52,56,62,63,64,65,67,69,70,71,72,74,78,80,84,],[-7,-31,-6,-12,-11,-21,-22,-14,-32,-9,-20,-8,-16,-17,-18,-19,73,-13,-23,-15,-29,-10,-30,-24,-25,]),'NUMBER':([20,21,22,23,25,26,33,42,43,45,46,47,48,49,50,51,53,68,],[30,34,34,34,34,34,34,56,57,34,34,34,34,34,34,34,34,34,]),'MINUS':([21,22,23,25,26,32,33,34,35,36,38,40,41,45,46,47,48,49,50,51,52,53,59,60,61,62,63,64,65,66,68,71,74,],[33,33,33,33,33,49,33,-21,-22,-14,49,49,49,33,33,33,33,33,33,33,-20,33,49,49,49,-16,-17,-18,-19,49,33,-15,49,]),'LT':([32,34,35,36,52,62,63,64,65,71,],[45,-21,-22,-14,-20,-16,-17,-18,-19,-15,]),'GT':([32,34,35,36,52,62,63,64,65,71,],[46,-21,-22,-14,-20,-16,-17,-18,-19,-15,]),'EQ':([32,34,35,36,52,62,63,64,65,71,],[47,-21,-22,-14,-20,-16,-17,-18,-19,-15,]),'PLUS':([32,34,35,36,38,40,41,52,59,60,61,62,63,64,65,66,71,74,],[48,-21,-22,-14,48,48,48,-20,48,48,48,-16,-17,-18,-19,48,-15,48,]),'TIMES':([32,34,35,36,38,40,41,52,59,60,61,62,63,64,65,66,71,74,],[50,-21,-22,-14,50,50,50,-20,50,50,50,50,50,-18,-19,50,-15,50,]),'DIVIDE':([32,34,35,36,38,40,41,52,59,60,61,62,63,64,65,66,71,74,],[51,-21,-22,-14,51,51,51,-20,51,51,51,51,51,-18,-19,51,-15,51,]),'ELDEF':([70,],[75,]),'ELUND':([80,],[81,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'program':([0,],[1,]),'function_list':([0,],[2,]),'function':([0,2,],[3,6,]),'statements':([14,15,],[17,21,]),'statement':([14,15,17,21,],[18,18,24,24,]),}
+_lr_goto_items = {'program':([0,],[1,]),'function_list':([0,],[2,]),'function':([0,2,],[3,6,]),'statements':([14,15,44,54,73,77,82,],[17,24,58,67,76,79,83,]),'statement':([14,15,17,24,44,54,58,67,73,76,77,79,82,83,],[18,18,28,28,18,18,28,28,18,28,18,28,18,28,]),'condition':([21,22,],[31,37,]),'expression':([21,22,23,25,26,33,45,46,47,48,49,50,51,53,68,],[32,32,38,40,41,52,59,60,61,62,63,64,65,66,74,]),'var_ref':([21,22,23,25,26,33,45,46,47,48,49,50,51,53,68,],[35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,14 +27,36 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> program","S'",1,None,None,None),
-  ('program -> function_list','program',1,'p_program','parser.py',6),
-  ('function_list -> function_list function','function_list',2,'p_function_list','parser.py',10),
-  ('function_list -> function','function_list',1,'p_function_list','parser.py',11),
-  ('function -> FUNCTION ID LPAREN ID RPAREN DO statements DONE','function',8,'p_function','parser.py',18),
-  ('function -> MAIN LPAREN ID RPAREN DO statements DONE','function',7,'p_main_function','parser.py',22),
-  ('statements -> statements statement','statements',2,'p_statements','parser.py',25),
-  ('statements -> statement','statements',1,'p_statements','parser.py',26),
-  ('statement -> VAR ID ASSIGN NUMBER','statement',4,'p_statement_var','parser.py',33),
-  ('statement -> ID ASSIGN NUMBER','statement',3,'p_statement_assign','parser.py',37),
-  ('statement -> FORWARD NUMBER','statement',2,'p_statement_forward','parser.py',41),
+  ('program -> function_list','program',1,'p_program','parser.py',13),
+  ('function_list -> function_list function','function_list',2,'p_function_list','parser.py',17),
+  ('function_list -> function','function_list',1,'p_function_list','parser.py',18),
+  ('function -> FUNCTION ID LPAREN ID RPAREN DO statements DONE','function',8,'p_function','parser.py',25),
+  ('function -> MAIN LPAREN ID RPAREN DO statements DONE','function',7,'p_main_function','parser.py',29),
+  ('statements -> statements statement','statements',2,'p_statements','parser.py',32),
+  ('statements -> statement','statements',1,'p_statements','parser.py',33),
+  ('statement -> VAR ID ASSIGN NUMBER','statement',4,'p_statement_var','parser.py',40),
+  ('statement -> ID ASSIGN expression','statement',3,'p_statement_assign','parser.py',44),
+  ('statement -> ID LPAREN expression RPAREN ASSIGN expression','statement',6,'p_statement_assign','parser.py',45),
+  ('statement -> FORWARD NUMBER','statement',2,'p_statement_forward','parser.py',52),
+  ('statement -> VAR ID','statement',2,'p_statement_var_decl','parser.py',56),
+  ('statement -> VAR ID LPAREN NUMBER RPAREN','statement',5,'p_statement_var_decl','parser.py',57),
+  ('var_ref -> ID','var_ref',1,'p_var_ref','parser.py',66),
+  ('var_ref -> ID LPAREN expression RPAREN','var_ref',4,'p_var_ref','parser.py',67),
+  ('expression -> expression PLUS expression','expression',3,'p_expression_binop','parser.py',75),
+  ('expression -> expression MINUS expression','expression',3,'p_expression_binop','parser.py',76),
+  ('expression -> expression TIMES expression','expression',3,'p_expression_binop','parser.py',77),
+  ('expression -> expression DIVIDE expression','expression',3,'p_expression_binop','parser.py',78),
+  ('expression -> MINUS expression','expression',2,'p_expression_uminus','parser.py',89),
+  ('expression -> NUMBER','expression',1,'p_expression_number','parser.py',94),
+  ('expression -> var_ref','expression',1,'p_expression_var','parser.py',98),
+  ('statement -> IF condition DO statements DONE','statement',5,'p_statement_if','parser.py',103),
+  ('statement -> IF condition DO statements DONE ELDEF DO statements DONE','statement',9,'p_statement_if','parser.py',104),
+  ('statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE','statement',13,'p_statement_if','parser.py',105),
+  ('condition -> expression LT expression','condition',3,'p_condition','parser.py',114),
+  ('condition -> expression GT expression','condition',3,'p_condition','parser.py',115),
+  ('condition -> expression EQ expression','condition',3,'p_condition','parser.py',116),
+  ('statement -> WHILE condition DO statements DONE','statement',5,'p_statement_while','parser.py',126),
+  ('statement -> WHILE condition DO statements FINISH statements DONE','statement',7,'p_statement_while','parser.py',127),
+  ('statement -> RETURN','statement',1,'p_statement_return','parser.py',135),
+  ('statement -> RETURN expression','statement',2,'p_statement_return','parser.py',136),
 ]

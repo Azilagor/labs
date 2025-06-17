@@ -1,5 +1,14 @@
+function fact(n) do
+    if n < 2 do
+        return 1
+    done eldef do
+        return n * fact(n - 1)
+    done
+done
+
 main(x) do
-    VAR a := 5
-    a := 3
-    forward 1
+    VAR a
+    a := 5
+    VAR res
+    res := fact(a) 
 done
