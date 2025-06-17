@@ -35,10 +35,6 @@ tokens = to_postfix(insert_concat(tokenize("(a|bc)*|(a|bc)*ba(c)*")))
 tree = SyntaxTree(tokens)
 dfa = DFA(tree)  # без минимизации
 
-dfa_min = DFAOptimizer(dfa).moore_minimize()
-print("✅ Moore dfa min:", dfa_min.to_regex())
-print("🔁 restored 2:", dfa.to_regex())
-
 def test_restore():
     pattern = "(a|bc)*|(a|bc)*ba(c)*"
 

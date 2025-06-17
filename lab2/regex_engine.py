@@ -15,6 +15,7 @@ class Regex:
 
     @classmethod
     def from_dfa(cls, dfa):
+        obj.dfa.start_state = dfa.start_state
         obj = cls.__new__(cls)
         obj.dfa = dfa
         obj.compiled = True

@@ -43,7 +43,9 @@ class DFAOptimizer:
                 if s.is_final:
                     is_final = True
             new_state = DFAState(merged_id_set, i + 1, is_final)
-            state_map[id(group[0])] = new_state
+            
+            for s in group:
+                state_map[id(s)] = new_state
             new_states.append(new_state)
 
         # заполняем переходы
@@ -72,87 +74,20 @@ class DFAOptimizer:
         minimized.leaves = self.original_dfa.leaves
         minimized.followpos = self.original_dfa.followpos
         minimized.terminal = self.original_dfa.terminal
+        
+        start_partition_index = self.get_partition_index(self.original_dfa.start_state, partitions)
+        minimized.start_state = state_map[id(partitions[start_partition_index][0])]
 
         return minimized
 
     def get_partition_index(self, state, partitions):
+        if state is None:
+            return -1
         for i, group in enumerate(partitions):
-            if state in group:
-                return i
+                if state in group:
+                    return i
         return -1
     
-    def moore_minimize(dfa):
-    # 1. Группируем состояния: финальные и нефинальные
-        finals = [s for s in dfa.states if s.is_final]
-        non_finals = [s for s in dfa.states if not s.is_final]
-        partitions = [non_finals, finals] if non_finals else [finals]
-
-        state_to_group = {}
-        for i, group in enumerate(partitions):
-            for state in group:
-                state_to_group[state] = i
-
-        changed = True
-        while changed:
-            changed = False
-            new_partitions = []
-
-            for group in partitions:
-                buckets = {}
-                for state in group:
-                    # Сигнатура = куда ведут переходы по каждому символу алфавита
-                    signature = tuple(
-                        state_to_group.get(state.transitions.get(c), -1)
-                        for c in sorted(dfa.alphabet)
-                    )
-                    buckets.setdefault(signature, []).append(state)
-                
-                if len(buckets) > 1:
-                    changed = True
-                new_partitions.extend(buckets.values())
-
-            partitions = new_partitions
-            # Обновим отображение: состояние -> индекс группы
-            state_to_group = {
-                state: i for i, group in enumerate(partitions) for state in group
-            }
-
-        # 2. Построим минимальный DFA
-        minimized_states = []
-        state_map = {}
-        for i, group in enumerate(partitions):
-            # Объединяем id_set всех состояний группы
-            combined_id_set = set()
-            is_final = any(s.is_final for s in group)
-            for s in group:
-                combined_id_set |= s.id_set
-
-            new_state = DFAState(combined_id_set, i + 1, is_final)
-            minimized_states.append(new_state)
-            state_map[id(group[0])] = new_state  # запоминаем по представителю группы
-
-        # 3. Установим переходы
-        for i, group in enumerate(partitions):
-            repr_state = group[0]
-            new_state = state_map[id(repr_state)]
-            for c in dfa.alphabet:
-                target = repr_state.transitions.get(c)
-                if not target:
-                    continue
-                for tgt_group in partitions:
-                    if target in tgt_group:
-                        new_state.transitions[c] = state_map[id(tgt_group[0])]
-                        break
-
-        # 4. Построим финальный DFA
-        minimized = object.__new__(type(dfa))
-        minimized.states = minimized_states
-        minimized.alphabet = dfa.alphabet
-        minimized.leaves = dfa.leaves
-        minimized.followpos = dfa.followpos
-        minimized.terminal = dfa.terminal
-
-        return minimized
 
 
 def intersect(dfa1, dfa2):

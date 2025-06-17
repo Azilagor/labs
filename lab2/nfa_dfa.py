@@ -29,6 +29,7 @@ class DFA:
         start_set = root.firstpos
         id_counter = 1
         start_state = DFAState(start_set, id_counter, self.terminal in start_set)
+        self.start_state = start_state
         self.states.append(start_state)
         self.state_map[frozenset(start_set)] = start_state
 
@@ -175,7 +176,8 @@ def intersect(dfa1, dfa2):
         k = key(s1, s2)
         if k in state_map:
             continue
-        new_state = DFAState({}, id_counter, s1.is_final and s2.is_final)
+        new_id_set = s1.id_set & s2.id_set
+        new_state = DFAState(new_id_set, id_counter, s1.is_final and s2.is_final)
         id_counter += 1
         state_map[k] = new_state
         new_states.append(new_state)

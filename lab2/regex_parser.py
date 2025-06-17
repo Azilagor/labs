@@ -1,7 +1,7 @@
-import re
 from typing import List
 
-# Приоритеты операторов
+from typing import List
+
 priority = {
     '|': 1,
     '.': 2,
@@ -23,7 +23,8 @@ def tokenize(regex: str) -> List[str]:
         elif c in {'(', ')', '|', '.', '*', '+', '?'}:
             tokens.append(c)
             i += 1
-        elif c == '[':  # множество символов
+        elif c == '[':
+            # множество символов: [abc] → (a|b|c)
             j = i + 1
             chars = []
             while j < len(regex) and regex[j] != ']':
@@ -36,16 +37,28 @@ def tokenize(regex: str) -> List[str]:
             tokens += list(group)
             tokens.append(')')
             i = j + 1
-        elif c == '{':  # повторение {n} или {n,m}
+        elif c == '{':
+            # повторение: {n} или {n,m}
             j = i
             while j < len(regex) and regex[j] != '}':
                 j += 1
             tokens.append(regex[i:j+1])
             i = j + 1
+        elif c == '<':
+            # Многосимвольный символ: <bc>, <ba>
+            j = i + 1
+            while j < len(regex) and regex[j] != '>':
+                j += 1
+            if j == len(regex):
+                raise ValueError("Unmatched < in expression")
+            symbol = regex[i+1:j]
+            tokens.append(symbol)
+            i = j + 1
         else:
             tokens.append(c)
             i += 1
     return tokens
+
 
 
 def insert_concat(tokens: List[str]) -> List[str]:
@@ -63,6 +76,7 @@ def insert_concat(tokens: List[str]) -> List[str]:
     return result
 
 
+
 def to_postfix(tokens: List[str]) -> List[str]:
     output = []
     stack = []
@@ -72,7 +86,7 @@ def to_postfix(tokens: List[str]) -> List[str]:
         elif token == ')':
             while stack and stack[-1] != '(':
                 output.append(stack.pop())
-            stack.pop()  
+            stack.pop()
         elif token in priority:
             while (stack and stack[-1] in priority and
                    priority[stack[-1]] >= priority[token]):
@@ -83,3 +97,4 @@ def to_postfix(tokens: List[str]) -> List[str]:
     while stack:
         output.append(stack.pop())
     return output
+
