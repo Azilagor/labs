@@ -28,6 +28,7 @@ def p_function(p):
 def p_main_function(p):
     '''function : MAIN LPAREN ID RPAREN DO statements DONE'''
     p[0] = ('function', 'main', p[3], p[6])
+    
 def p_statements(p):
     '''statements : statements statement
                   | statement'''
@@ -130,6 +131,10 @@ def p_statement_while(p):
     else:
         p[0] = ('while', p[2], p[4], p[6])
 
+
+def p_expression_call(p):
+    'expression : ID LPAREN expression RPAREN'
+    p[0] = ('call_expr', p[1], p[3])
 
 def p_statement_return(p):
     '''statement : RETURN

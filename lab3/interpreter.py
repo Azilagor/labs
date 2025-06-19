@@ -31,14 +31,14 @@ def run_block(statements, env, robot, func_map, call_stack):
                 print(f"Create array {var} of size {size}")
         elif stmt[0] == 'assign':
             var, value_expr = stmt[1], stmt[2]
-            value = eval_expr(value_expr, env)
+            value = eval_expr(value_expr, env, func_map, call_stack, robot)
             env[var] = value
             print(f"Set {var} = {value}")
         elif stmt[0] == 'assign_index':
             var, idx_expr, value_expr = stmt[1], stmt[2], stmt[3]
             arr = env.get(var, [])
             idx_val = eval_expr(idx_expr, env)
-            value = eval_expr(value_expr, env)
+            value = eval_expr(value_expr, env, func_map, call_stack, robot)
             if not isinstance(arr, list):
                 arr = []
             while len(arr) <= idx_val:
@@ -47,17 +47,17 @@ def run_block(statements, env, robot, func_map, call_stack):
             env[var] = arr
             print(f"Set {var}({idx_val}) = {value}")
         elif stmt[0] == 'forward':
-            steps = eval_expr(stmt[1], env)
+            steps = eval_expr(stmt[1], env, func_map, call_stack, robot)
             robot.move_forward(steps)
         elif stmt[0] == 'backward':
-            steps = eval_expr(stmt[1], env)
+            steps = eval_expr(stmt[1], env, func_map, call_stack, robot)
             robot.move_backward(steps)
         elif stmt[0] == 'if':
             cond = stmt[1]
             if_block = stmt[2]
             eldef_block = stmt[3]
             elund_block = stmt[4]
-            cond_val = eval_condition(cond, env)
+            cond_val = eval_condition(cond, env, func_map, call_stack, robot)
             if cond_val is True:
                 run_block(if_block, env, robot, func_map, call_stack)
             elif cond_val is False and eldef_block:
@@ -69,7 +69,7 @@ def run_block(statements, env, robot, func_map, call_stack):
             body = stmt[2]
             finish_block = stmt[3]
             while True:
-                res = eval_condition(cond, env)
+                res = eval_condition(cond, env, func_map, call_stack, robot)
                 if res is True:
                     run_block(body, env, robot, func_map, call_stack)
                 elif res is False:
@@ -80,25 +80,25 @@ def run_block(statements, env, robot, func_map, call_stack):
                     break
         elif stmt[0] == 'call':
             func_name = stmt[1]
-            arg_val = eval_expr(stmt[2], env)
+            arg_val = eval_expr(stmt[2], env, func_map, call_stack, robot)
             call_function(func_name, arg_val, func_map, call_stack, robot)
         elif stmt[0] == 'return':
             value = None
             if stmt[1] is not None:
-                value = eval_expr(stmt[1], env)
+                value = eval_expr(stmt[1], env, func_map, call_stack, robot)
             return value
         else:
             print(f"Unknown statement: {stmt}")
         idx += 1
     return None
 
-def eval_condition(cond, env):
+def eval_condition(cond, env, func_map, call_stack, robot):
     if cond[0] == 'lt':
-        return eval_expr(cond[1], env) < eval_expr(cond[2], env)
+        return eval_expr(cond[1], env, func_map, call_stack, robot) < eval_expr(cond[2], env, func_map, call_stack, robot)
     if cond[0] == 'gt':
-        return eval_expr(cond[1], env) > eval_expr(cond[2], env)
+        return eval_expr(cond[1], env, func_map, call_stack, robot) > eval_expr(cond[2], env, func_map, call_stack, robot)
     if cond[0] == 'eq':
-        return eval_expr(cond[1], env) == eval_expr(cond[2], env)
+        return eval_expr(cond[1], env, func_map, call_stack, robot) == eval_expr(cond[2], env, func_map, call_stack, robot)
     return False
 
 def eval_expr(expr, env, func_map=None, call_stack=None, robot=None):
@@ -109,7 +109,7 @@ def eval_expr(expr, env, func_map=None, call_stack=None, robot=None):
             return env.get(var, 'UNDEF')
         elif op == 'var_ref_index':
             var, idx_expr = expr[1], expr[2]
-            idx = eval_expr(idx_expr, env)
+            idx = eval_expr(idx_expr, env, func_map, call_stack, robot)
             arr = env.get(var, [])
             if not isinstance(arr, list):
                 return 'UNDEF'
@@ -118,13 +118,13 @@ def eval_expr(expr, env, func_map=None, call_stack=None, robot=None):
             except (IndexError, TypeError):
                 return 'UNDEF'
         elif op == 'plus':
-            return eval_expr(expr[1], env) + eval_expr(expr[2], env)
+            return eval_expr(expr[1], env, func_map, call_stack, robot) + eval_expr(expr[2], env, func_map, call_stack, robot)
         elif op == 'minus':
-            return eval_expr(expr[1], env) - eval_expr(expr[2], env)
+            return eval_expr(expr[1], env, func_map, call_stack, robot) - eval_expr(expr[2], env, func_map, call_stack, robot)
         elif op == 'uminus':
-            return -eval_expr(expr[1], env)
+            return -eval_expr(expr[1], env, func_map, call_stack, robot)
         elif op == 'xor':
-            return int(bool(eval_expr(expr[1], env))) ^ int(bool(eval_expr(expr[2], env)))
+            return int(bool(eval_expr(expr[1], env, func_map, call_stack, robot))) ^ int(bool(eval_expr(expr[2], env, func_map, call_stack, robot)))
         elif op == 'sum':
             var = expr[1]
             arr = env.get(var, [])
@@ -132,15 +132,15 @@ def eval_expr(expr, env, func_map=None, call_stack=None, robot=None):
                 return 'UNDEF'
             return sum(x if isinstance(x, (int, float)) and x is not None else 0 for x in arr)
         elif op == 'mul':
-            return eval_expr(expr[1], env) * eval_expr(expr[2], env)
+            return eval_expr(expr[1], env, func_map, call_stack, robot) * eval_expr(expr[2], env, func_map, call_stack, robot)
         elif op == 'div':
-            return eval_expr(expr[1], env) // eval_expr(expr[2], env)
+            return eval_expr(expr[1], env, func_map, call_stack, robot) // eval_expr(expr[2], env, func_map, call_stack, robot)
         elif op == 'lt':
-            return eval_expr(expr[1], env) < eval_expr(expr[2], env)
+            return eval_expr(expr[1], env, func_map, call_stack, robot) < eval_expr(expr[2], env, func_map, call_stack, robot)
         elif op == 'gt':
-            return eval_expr(expr[1], env) > eval_expr(expr[2], env)
+            return eval_expr(expr[1], env, func_map, call_stack, robot) > eval_expr(expr[2], env, func_map, call_stack, robot)
         elif op == 'eq':
-            return eval_expr(expr[1], env) == eval_expr(expr[2], env)
+            return eval_expr(expr[1], env, func_map, call_stack, robot) == eval_expr(expr[2], env, func_map, call_stack, robot)
         elif op == 'call_expr':
             func_name = expr[1]
             arg_val = eval_expr(expr[2], env, func_map, call_stack, robot)
