@@ -12,6 +12,18 @@ function primer_array(n) do
     arr[2] := arr[0] + arr[1]
 done
 
+
+function primer_array1(n) do
+    VAR arr(3)
+    arr[0] := 10
+    arr[1] := 20
+    arr[2] := arr[0]
+    arr[0] := arr[1]
+    arr[1] := arr[2]
+    arr[3] := 0
+done
+
+
 function primer_while(n) do
     VAR sum
     sum := 0
@@ -36,6 +48,8 @@ done
 function primer_add1(n) do
     return n + 1
 done
+
+
 
 function primer_add2(n) do
     VAR a
@@ -103,14 +117,15 @@ done
 
 function const(n) do
     VAR inf
-    inf := INF
+    inf := INF+2
     VAR nan
-    nan := NAN
+    nan := NAN*2
 done
 
 main(x) do
     primer_arith(0)
     primer_array(0)
+    primer_array1(0)
     primer_while(0)
     primer_if(0)
     primer_add1(0)

@@ -29,10 +29,14 @@ def run_block(statements, env, robot, func_map, call_stack):
                 size = stmt[2]
                 env[var] = [None] * size
                 print(f"Create array {var} of size {size}")
+                
         elif stmt[0] == 'assign':
             var, value_expr = stmt[1], stmt[2]
             value = eval_expr(value_expr, env, func_map, call_stack, robot)
-            env[var] = value
+            if isinstance(value, list):
+                env[var] = value.copy()
+            else:
+                env[var] = value
             print(f"Set {var} = {value}")
         elif stmt[0] == 'assign_index':
             var, idx_expr, value_expr = stmt[1], stmt[2], stmt[3]
@@ -115,11 +119,20 @@ def eval_condition(cond, env, func_map, call_stack, robot):
     return False
 
 def eval_expr(expr, env, func_map=None, call_stack=None, robot=None):
+    if expr == 'INF':
+        return float('inf')
+    elif expr == '-INF':
+        return float('-inf')
+    elif expr == 'NAN':
+        return float('nan')
     if isinstance(expr, tuple):
         op = expr[0]
         if op == 'var_ref':
             var = expr[1]
-            return env.get(var, 'UNDEF')
+            val = env.get(var, 'UNDEF')
+            if isinstance(val, list):
+                return val.copy()
+            return val
         elif op == 'var_ref_index':
             var, idx_expr = expr[1], expr[2]
             idx = eval_expr(idx_expr, env, func_map, call_stack, robot)
@@ -164,3 +177,36 @@ def eval_expr(expr, env, func_map=None, call_stack=None, robot=None):
     else:
         return expr
 
+
+
+
+def cell_to_bool(cell):
+    if cell in ('EXIT', 'EMPTY'):
+        return True
+    if cell in ('WALL', 'BOX'):
+        return False
+    return None  # UNDEF
+
+def cell_to_int(cell):
+    if cell == 'EMPTY':
+        return 0
+    if cell == 'WALL':
+        return float('inf')
+    if cell == 'EXIT':
+        return float('-inf')
+    if cell == 'UNDEF':
+        return float('nan')
+    if isinstance(cell, dict) and cell.get('type') == 'BOX':
+        return cell.get('weight', 0)
+    return 0
+
+def int_to_cell(value):
+    if value == 0:
+        return 'EMPTY'
+    if value == float('inf'):
+        return 'WALL'
+    if value == float('-inf'):
+        return 'EXIT'
+    if value != value:  # nan check
+        return 'UNDEF'
+    return {'type': 'BOX', 'weight': value}

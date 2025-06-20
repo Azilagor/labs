@@ -43,6 +43,19 @@ def t_NAN(t):
     t.value = float('nan')
     return t
 
+def t_TRUE(t):
+    r'TRUE|T'
+    t.value = True
+    return t
+def t_FALSE(t):
+    r'FALSE|F'
+    t.value = False
+    return t
+def t_UNDEF(t):
+    r'UNDEF|U'
+    t.value = None  
+    return t
+
 def t_ID(t):
     r'[A-Za-z_][A-Za-z0-9_]*'
     t.type = reserved.get(t.value.lower(), 'ID')
