@@ -14,15 +14,11 @@ Unused terminals:
     FALSE
     HASH
     HEXNUMBER
-    INF
     INT
-    LBRACKET
     LEFT
     LOAD
     LOOK
     MINUS_INF
-    NAN
-    RBRACKET
     RIGHT
     TEST
     TRUE
@@ -41,97 +37,103 @@ Rule 5     function -> MAIN LPAREN ID RPAREN DO statements DONE
 Rule 6     statements -> statements statement
 Rule 7     statements -> statement
 Rule 8     statement -> VAR ID ASSIGN NUMBER
-Rule 9     statement -> ID ASSIGN expression
-Rule 10    statement -> ID LPAREN expression RPAREN ASSIGN expression
-Rule 11    statement -> FORWARD NUMBER
-Rule 12    statement -> VAR ID
-Rule 13    statement -> VAR ID LPAREN NUMBER RPAREN
-Rule 14    var_ref -> ID
-Rule 15    var_ref -> ID LPAREN expression RPAREN
-Rule 16    expression -> expression PLUS expression
-Rule 17    expression -> expression MINUS expression
-Rule 18    expression -> expression TIMES expression
-Rule 19    expression -> expression DIVIDE expression
-Rule 20    expression -> MINUS expression
-Rule 21    expression -> NUMBER
-Rule 22    expression -> var_ref
-Rule 23    statement -> IF condition DO statements DONE
-Rule 24    statement -> IF condition DO statements DONE ELDEF DO statements DONE
-Rule 25    statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-Rule 26    condition -> expression LT expression
-Rule 27    condition -> expression GT expression
-Rule 28    condition -> expression EQ expression
-Rule 29    statement -> WHILE condition DO statements DONE
-Rule 30    statement -> WHILE condition DO statements FINISH statements DONE
-Rule 31    expression -> ID LPAREN expression RPAREN
-Rule 32    statement -> RETURN
-Rule 33    statement -> RETURN expression
+Rule 9     statement -> ID LPAREN expression RPAREN
+Rule 10    expression -> INF
+Rule 11    expression -> NAN
+Rule 12    statement -> FORWARD NUMBER
+Rule 13    statement -> VAR ID
+Rule 14    statement -> VAR ID LPAREN NUMBER RPAREN
+Rule 15    var_ref -> ID
+Rule 16    var_ref -> ID LPAREN expression RPAREN
+Rule 17    expression -> expression PLUS expression
+Rule 18    expression -> expression MINUS expression
+Rule 19    expression -> expression TIMES expression
+Rule 20    expression -> expression DIVIDE expression
+Rule 21    expression -> MINUS expression
+Rule 22    expression -> NUMBER
+Rule 23    statement -> IF condition DO statements DONE if_else_chain
+Rule 24    if_else_chain -> <empty>
+Rule 25    if_else_chain -> ELUND condition DO statements DONE if_else_chain
+Rule 26    if_else_chain -> ELDEF DO statements DONE
+Rule 27    condition -> expression LT expression
+Rule 28    condition -> expression GT expression
+Rule 29    condition -> expression EQ expression
+Rule 30    statement -> WHILE condition DO statements DONE
+Rule 31    statement -> WHILE condition DO statements FINISH statements DONE
+Rule 32    expression -> ID LPAREN expression RPAREN
+Rule 33    expression -> ID LBRACKET expression RBRACKET
+Rule 34    expression -> ID
+Rule 35    statement -> ID ASSIGN expression
+Rule 36    statement -> ID LBRACKET expression RBRACKET ASSIGN expression
+Rule 37    statement -> RETURN
+Rule 38    statement -> RETURN expression
 
 Terminals, with rules where they appear
 
-ASSIGN               : 8 9 10
+ASSIGN               : 8 35 36
 BACKWARD             : 
 BOOL                 : 
 BOX                  : 
 CELL                 : 
 COLON                : 
 COMMA                : 
-DIVIDE               : 19
-DO                   : 4 5 23 24 24 25 25 25 29 30
-DONE                 : 4 5 23 24 24 25 25 25 29 30
+DIVIDE               : 20
+DO                   : 4 5 23 25 26 30 31
+DONE                 : 4 5 23 25 26 30 31
 DROP                 : 
-ELDEF                : 24 25
+ELDEF                : 26
 ELUND                : 25
 EMPTY                : 
-EQ                   : 28
+EQ                   : 29
 EXIT                 : 
 FALSE                : 
-FINISH               : 30
-FORWARD              : 11
+FINISH               : 31
+FORWARD              : 12
 FUNCTION             : 4
-GT                   : 27
+GT                   : 28
 HASH                 : 
 HEXNUMBER            : 
-ID                   : 4 4 5 8 9 10 12 13 14 15 31
-IF                   : 23 24 25
-INF                  : 
+ID                   : 4 4 5 8 9 13 14 15 16 32 33 34 35 36
+IF                   : 23
+INF                  : 10
 INT                  : 
-LBRACKET             : 
+LBRACKET             : 33 36
 LEFT                 : 
 LOAD                 : 
 LOOK                 : 
-LPAREN               : 4 5 10 13 15 31
-LT                   : 26
+LPAREN               : 4 5 9 14 16 32
+LT                   : 27
 MAIN                 : 5
-MINUS                : 17 20
+MINUS                : 18 21
 MINUS_INF            : 
-NAN                  : 
-NUMBER               : 8 11 13 21
-PLUS                 : 16
-RBRACKET             : 
-RETURN               : 32 33
+NAN                  : 11
+NUMBER               : 8 12 14 22
+PLUS                 : 17
+RBRACKET             : 33 36
+RETURN               : 37 38
 RIGHT                : 
-RPAREN               : 4 5 10 13 15 31
+RPAREN               : 4 5 9 14 16 32
 TEST                 : 
-TIMES                : 18
+TIMES                : 19
 TRUE                 : 
 UNDEF                : 
-VAR                  : 8 12 13
+VAR                  : 8 13 14
 WALL                 : 
-WHILE                : 29 30
+WHILE                : 30 31
 XOR                  : 
 error                : 
 
 Nonterminals, with rules where they appear
 
-condition            : 23 24 25 29 30
-expression           : 9 10 10 15 16 16 17 17 18 18 19 19 20 26 26 27 27 28 28 31 33
+condition            : 23 25 30 31
+expression           : 9 16 17 17 18 18 19 19 20 20 21 27 27 28 28 29 29 32 33 35 36 36 38
 function             : 2 3
 function_list        : 1 2
+if_else_chain        : 23 25
 program              : 0
 statement            : 6 7
-statements           : 4 5 6 23 24 24 25 25 25 29 30 30
-var_ref              : 22
+statements           : 4 5 6 23 25 26 30 31 31
+var_ref              : 
 
 Parsing method: LALR
 
@@ -257,18 +259,17 @@ state 14
     (6) statements -> . statements statement
     (7) statements -> . statement
     (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
 
     VAR             shift and go to state 19
     ID              shift and go to state 16
@@ -286,18 +287,17 @@ state 15
     (6) statements -> . statements statement
     (7) statements -> . statement
     (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
 
     VAR             shift and go to state 19
     ID              shift and go to state 16
@@ -311,11 +311,13 @@ state 15
 
 state 16
 
-    (9) statement -> ID . ASSIGN expression
-    (10) statement -> ID . LPAREN expression RPAREN ASSIGN expression
+    (9) statement -> ID . LPAREN expression RPAREN
+    (35) statement -> ID . ASSIGN expression
+    (36) statement -> ID . LBRACKET expression RBRACKET ASSIGN expression
 
-    ASSIGN          shift and go to state 25
-    LPAREN          shift and go to state 26
+    LPAREN          shift and go to state 25
+    ASSIGN          shift and go to state 26
+    LBRACKET        shift and go to state 27
 
 
 state 17
@@ -323,20 +325,19 @@ state 17
     (5) function -> MAIN LPAREN ID RPAREN DO statements . DONE
     (6) statements -> statements . statement
     (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
 
-    DONE            shift and go to state 27
+    DONE            shift and go to state 28
     VAR             shift and go to state 19
     ID              shift and go to state 16
     FORWARD         shift and go to state 20
@@ -344,7 +345,7 @@ state 17
     WHILE           shift and go to state 22
     RETURN          shift and go to state 23
 
-    statement                      shift and go to state 28
+    statement                      shift and go to state 29
 
 state 18
 
@@ -363,123 +364,126 @@ state 18
 state 19
 
     (8) statement -> VAR . ID ASSIGN NUMBER
-    (12) statement -> VAR . ID
-    (13) statement -> VAR . ID LPAREN NUMBER RPAREN
+    (13) statement -> VAR . ID
+    (14) statement -> VAR . ID LPAREN NUMBER RPAREN
 
-    ID              shift and go to state 29
+    ID              shift and go to state 30
 
 
 state 20
 
-    (11) statement -> FORWARD . NUMBER
+    (12) statement -> FORWARD . NUMBER
 
-    NUMBER          shift and go to state 30
+    NUMBER          shift and go to state 31
 
 
 state 21
 
-    (23) statement -> IF . condition DO statements DONE
-    (24) statement -> IF . condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> IF . condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (26) condition -> . expression LT expression
-    (27) condition -> . expression GT expression
-    (28) condition -> . expression EQ expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
+    (23) statement -> IF . condition DO statements DONE if_else_chain
+    (27) condition -> . expression LT expression
+    (28) condition -> . expression GT expression
+    (29) condition -> . expression EQ expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
 
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
 
-    condition                      shift and go to state 31
-    expression                     shift and go to state 32
-    var_ref                        shift and go to state 35
+    condition                      shift and go to state 32
+    expression                     shift and go to state 33
 
 state 22
 
-    (29) statement -> WHILE . condition DO statements DONE
-    (30) statement -> WHILE . condition DO statements FINISH statements DONE
-    (26) condition -> . expression LT expression
-    (27) condition -> . expression GT expression
-    (28) condition -> . expression EQ expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
+    (30) statement -> WHILE . condition DO statements DONE
+    (31) statement -> WHILE . condition DO statements FINISH statements DONE
+    (27) condition -> . expression LT expression
+    (28) condition -> . expression GT expression
+    (29) condition -> . expression EQ expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
 
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
 
-    condition                      shift and go to state 37
-    expression                     shift and go to state 32
-    var_ref                        shift and go to state 35
+    condition                      shift and go to state 39
+    expression                     shift and go to state 33
 
 state 23
 
-    (32) statement -> RETURN .
-    (33) statement -> RETURN . expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
+    (37) statement -> RETURN .
+    (38) statement -> RETURN . expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
 
   ! shift/reduce conflict for ID resolved as shift
-    DONE            reduce using rule 32 (statement -> RETURN .)
-    VAR             reduce using rule 32 (statement -> RETURN .)
-    FORWARD         reduce using rule 32 (statement -> RETURN .)
-    IF              reduce using rule 32 (statement -> RETURN .)
-    WHILE           reduce using rule 32 (statement -> RETURN .)
-    RETURN          reduce using rule 32 (statement -> RETURN .)
-    FINISH          reduce using rule 32 (statement -> RETURN .)
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
+    DONE            reduce using rule 37 (statement -> RETURN .)
+    VAR             reduce using rule 37 (statement -> RETURN .)
+    FORWARD         reduce using rule 37 (statement -> RETURN .)
+    IF              reduce using rule 37 (statement -> RETURN .)
+    WHILE           reduce using rule 37 (statement -> RETURN .)
+    RETURN          reduce using rule 37 (statement -> RETURN .)
+    FINISH          reduce using rule 37 (statement -> RETURN .)
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
 
-  ! ID              [ reduce using rule 32 (statement -> RETURN .) ]
+  ! ID              [ reduce using rule 37 (statement -> RETURN .) ]
 
-    expression                     shift and go to state 38
-    var_ref                        shift and go to state 35
+    expression                     shift and go to state 40
 
 state 24
 
     (4) function -> FUNCTION ID LPAREN ID RPAREN DO statements . DONE
     (6) statements -> statements . statement
     (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
 
-    DONE            shift and go to state 39
+    DONE            shift and go to state 41
     VAR             shift and go to state 19
     ID              shift and go to state 16
     FORWARD         shift and go to state 20
@@ -487,51 +491,78 @@ state 24
     WHILE           shift and go to state 22
     RETURN          shift and go to state 23
 
-    statement                      shift and go to state 28
+    statement                      shift and go to state 29
 
 state 25
 
-    (9) statement -> ID ASSIGN . expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
+    (9) statement -> ID LPAREN . expression RPAREN
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
 
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
 
-    expression                     shift and go to state 40
-    var_ref                        shift and go to state 35
+    expression                     shift and go to state 42
 
 state 26
 
-    (10) statement -> ID LPAREN . expression RPAREN ASSIGN expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
+    (35) statement -> ID ASSIGN . expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
 
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
 
-    expression                     shift and go to state 41
-    var_ref                        shift and go to state 35
+    expression                     shift and go to state 43
 
 state 27
+
+    (36) statement -> ID LBRACKET . expression RBRACKET ASSIGN expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
+
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
+
+    expression                     shift and go to state 44
+
+state 28
 
     (5) function -> MAIN LPAREN ID RPAREN DO statements DONE .
 
@@ -540,7 +571,7 @@ state 27
     $end            reduce using rule 5 (function -> MAIN LPAREN ID RPAREN DO statements DONE .)
 
 
-state 28
+state 29
 
     (6) statements -> statements statement .
 
@@ -554,190 +585,218 @@ state 28
     FINISH          reduce using rule 6 (statements -> statements statement .)
 
 
-state 29
-
-    (8) statement -> VAR ID . ASSIGN NUMBER
-    (12) statement -> VAR ID .
-    (13) statement -> VAR ID . LPAREN NUMBER RPAREN
-
-    ASSIGN          shift and go to state 42
-    DONE            reduce using rule 12 (statement -> VAR ID .)
-    VAR             reduce using rule 12 (statement -> VAR ID .)
-    ID              reduce using rule 12 (statement -> VAR ID .)
-    FORWARD         reduce using rule 12 (statement -> VAR ID .)
-    IF              reduce using rule 12 (statement -> VAR ID .)
-    WHILE           reduce using rule 12 (statement -> VAR ID .)
-    RETURN          reduce using rule 12 (statement -> VAR ID .)
-    FINISH          reduce using rule 12 (statement -> VAR ID .)
-    LPAREN          shift and go to state 43
-
-
 state 30
 
-    (11) statement -> FORWARD NUMBER .
+    (8) statement -> VAR ID . ASSIGN NUMBER
+    (13) statement -> VAR ID .
+    (14) statement -> VAR ID . LPAREN NUMBER RPAREN
 
-    DONE            reduce using rule 11 (statement -> FORWARD NUMBER .)
-    VAR             reduce using rule 11 (statement -> FORWARD NUMBER .)
-    ID              reduce using rule 11 (statement -> FORWARD NUMBER .)
-    FORWARD         reduce using rule 11 (statement -> FORWARD NUMBER .)
-    IF              reduce using rule 11 (statement -> FORWARD NUMBER .)
-    WHILE           reduce using rule 11 (statement -> FORWARD NUMBER .)
-    RETURN          reduce using rule 11 (statement -> FORWARD NUMBER .)
-    FINISH          reduce using rule 11 (statement -> FORWARD NUMBER .)
+    ASSIGN          shift and go to state 45
+    DONE            reduce using rule 13 (statement -> VAR ID .)
+    VAR             reduce using rule 13 (statement -> VAR ID .)
+    ID              reduce using rule 13 (statement -> VAR ID .)
+    FORWARD         reduce using rule 13 (statement -> VAR ID .)
+    IF              reduce using rule 13 (statement -> VAR ID .)
+    WHILE           reduce using rule 13 (statement -> VAR ID .)
+    RETURN          reduce using rule 13 (statement -> VAR ID .)
+    FINISH          reduce using rule 13 (statement -> VAR ID .)
+    LPAREN          shift and go to state 46
 
 
 state 31
 
-    (23) statement -> IF condition . DO statements DONE
-    (24) statement -> IF condition . DO statements DONE ELDEF DO statements DONE
-    (25) statement -> IF condition . DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
+    (12) statement -> FORWARD NUMBER .
 
-    DO              shift and go to state 44
+    DONE            reduce using rule 12 (statement -> FORWARD NUMBER .)
+    VAR             reduce using rule 12 (statement -> FORWARD NUMBER .)
+    ID              reduce using rule 12 (statement -> FORWARD NUMBER .)
+    FORWARD         reduce using rule 12 (statement -> FORWARD NUMBER .)
+    IF              reduce using rule 12 (statement -> FORWARD NUMBER .)
+    WHILE           reduce using rule 12 (statement -> FORWARD NUMBER .)
+    RETURN          reduce using rule 12 (statement -> FORWARD NUMBER .)
+    FINISH          reduce using rule 12 (statement -> FORWARD NUMBER .)
 
 
 state 32
 
-    (26) condition -> expression . LT expression
-    (27) condition -> expression . GT expression
-    (28) condition -> expression . EQ expression
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
+    (23) statement -> IF condition . DO statements DONE if_else_chain
 
-    LT              shift and go to state 45
-    GT              shift and go to state 46
-    EQ              shift and go to state 47
-    PLUS            shift and go to state 48
-    MINUS           shift and go to state 49
-    TIMES           shift and go to state 50
-    DIVIDE          shift and go to state 51
+    DO              shift and go to state 47
 
 
 state 33
 
-    (20) expression -> MINUS . expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
+    (27) condition -> expression . LT expression
+    (28) condition -> expression . GT expression
+    (29) condition -> expression . EQ expression
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
+    LT              shift and go to state 48
+    GT              shift and go to state 49
+    EQ              shift and go to state 50
+    PLUS            shift and go to state 51
+    MINUS           shift and go to state 52
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
 
-    expression                     shift and go to state 52
-    var_ref                        shift and go to state 35
 
 state 34
 
-    (21) expression -> NUMBER .
+    (10) expression -> INF .
 
-    LT              reduce using rule 21 (expression -> NUMBER .)
-    GT              reduce using rule 21 (expression -> NUMBER .)
-    EQ              reduce using rule 21 (expression -> NUMBER .)
-    PLUS            reduce using rule 21 (expression -> NUMBER .)
-    MINUS           reduce using rule 21 (expression -> NUMBER .)
-    TIMES           reduce using rule 21 (expression -> NUMBER .)
-    DIVIDE          reduce using rule 21 (expression -> NUMBER .)
-    DONE            reduce using rule 21 (expression -> NUMBER .)
-    VAR             reduce using rule 21 (expression -> NUMBER .)
-    ID              reduce using rule 21 (expression -> NUMBER .)
-    FORWARD         reduce using rule 21 (expression -> NUMBER .)
-    IF              reduce using rule 21 (expression -> NUMBER .)
-    WHILE           reduce using rule 21 (expression -> NUMBER .)
-    RETURN          reduce using rule 21 (expression -> NUMBER .)
-    FINISH          reduce using rule 21 (expression -> NUMBER .)
-    RPAREN          reduce using rule 21 (expression -> NUMBER .)
-    DO              reduce using rule 21 (expression -> NUMBER .)
+    LT              reduce using rule 10 (expression -> INF .)
+    GT              reduce using rule 10 (expression -> INF .)
+    EQ              reduce using rule 10 (expression -> INF .)
+    PLUS            reduce using rule 10 (expression -> INF .)
+    MINUS           reduce using rule 10 (expression -> INF .)
+    TIMES           reduce using rule 10 (expression -> INF .)
+    DIVIDE          reduce using rule 10 (expression -> INF .)
+    DONE            reduce using rule 10 (expression -> INF .)
+    VAR             reduce using rule 10 (expression -> INF .)
+    ID              reduce using rule 10 (expression -> INF .)
+    FORWARD         reduce using rule 10 (expression -> INF .)
+    IF              reduce using rule 10 (expression -> INF .)
+    WHILE           reduce using rule 10 (expression -> INF .)
+    RETURN          reduce using rule 10 (expression -> INF .)
+    FINISH          reduce using rule 10 (expression -> INF .)
+    RPAREN          reduce using rule 10 (expression -> INF .)
+    RBRACKET        reduce using rule 10 (expression -> INF .)
+    DO              reduce using rule 10 (expression -> INF .)
 
 
 state 35
 
-    (22) expression -> var_ref .
+    (11) expression -> NAN .
 
-    LT              reduce using rule 22 (expression -> var_ref .)
-    GT              reduce using rule 22 (expression -> var_ref .)
-    EQ              reduce using rule 22 (expression -> var_ref .)
-    PLUS            reduce using rule 22 (expression -> var_ref .)
-    MINUS           reduce using rule 22 (expression -> var_ref .)
-    TIMES           reduce using rule 22 (expression -> var_ref .)
-    DIVIDE          reduce using rule 22 (expression -> var_ref .)
-    DONE            reduce using rule 22 (expression -> var_ref .)
-    VAR             reduce using rule 22 (expression -> var_ref .)
-    ID              reduce using rule 22 (expression -> var_ref .)
-    FORWARD         reduce using rule 22 (expression -> var_ref .)
-    IF              reduce using rule 22 (expression -> var_ref .)
-    WHILE           reduce using rule 22 (expression -> var_ref .)
-    RETURN          reduce using rule 22 (expression -> var_ref .)
-    FINISH          reduce using rule 22 (expression -> var_ref .)
-    RPAREN          reduce using rule 22 (expression -> var_ref .)
-    DO              reduce using rule 22 (expression -> var_ref .)
+    LT              reduce using rule 11 (expression -> NAN .)
+    GT              reduce using rule 11 (expression -> NAN .)
+    EQ              reduce using rule 11 (expression -> NAN .)
+    PLUS            reduce using rule 11 (expression -> NAN .)
+    MINUS           reduce using rule 11 (expression -> NAN .)
+    TIMES           reduce using rule 11 (expression -> NAN .)
+    DIVIDE          reduce using rule 11 (expression -> NAN .)
+    DONE            reduce using rule 11 (expression -> NAN .)
+    VAR             reduce using rule 11 (expression -> NAN .)
+    ID              reduce using rule 11 (expression -> NAN .)
+    FORWARD         reduce using rule 11 (expression -> NAN .)
+    IF              reduce using rule 11 (expression -> NAN .)
+    WHILE           reduce using rule 11 (expression -> NAN .)
+    RETURN          reduce using rule 11 (expression -> NAN .)
+    FINISH          reduce using rule 11 (expression -> NAN .)
+    RPAREN          reduce using rule 11 (expression -> NAN .)
+    RBRACKET        reduce using rule 11 (expression -> NAN .)
+    DO              reduce using rule 11 (expression -> NAN .)
 
 
 state 36
 
-    (31) expression -> ID . LPAREN expression RPAREN
-    (14) var_ref -> ID .
-    (15) var_ref -> ID . LPAREN expression RPAREN
+    (21) expression -> MINUS . expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
 
-    LPAREN          shift and go to state 53
-    LT              reduce using rule 14 (var_ref -> ID .)
-    GT              reduce using rule 14 (var_ref -> ID .)
-    EQ              reduce using rule 14 (var_ref -> ID .)
-    PLUS            reduce using rule 14 (var_ref -> ID .)
-    MINUS           reduce using rule 14 (var_ref -> ID .)
-    TIMES           reduce using rule 14 (var_ref -> ID .)
-    DIVIDE          reduce using rule 14 (var_ref -> ID .)
-    DONE            reduce using rule 14 (var_ref -> ID .)
-    VAR             reduce using rule 14 (var_ref -> ID .)
-    ID              reduce using rule 14 (var_ref -> ID .)
-    FORWARD         reduce using rule 14 (var_ref -> ID .)
-    IF              reduce using rule 14 (var_ref -> ID .)
-    WHILE           reduce using rule 14 (var_ref -> ID .)
-    RETURN          reduce using rule 14 (var_ref -> ID .)
-    FINISH          reduce using rule 14 (var_ref -> ID .)
-    RPAREN          reduce using rule 14 (var_ref -> ID .)
-    DO              reduce using rule 14 (var_ref -> ID .)
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
 
+    expression                     shift and go to state 55
 
 state 37
 
-    (29) statement -> WHILE condition . DO statements DONE
-    (30) statement -> WHILE condition . DO statements FINISH statements DONE
+    (22) expression -> NUMBER .
 
-    DO              shift and go to state 54
+    LT              reduce using rule 22 (expression -> NUMBER .)
+    GT              reduce using rule 22 (expression -> NUMBER .)
+    EQ              reduce using rule 22 (expression -> NUMBER .)
+    PLUS            reduce using rule 22 (expression -> NUMBER .)
+    MINUS           reduce using rule 22 (expression -> NUMBER .)
+    TIMES           reduce using rule 22 (expression -> NUMBER .)
+    DIVIDE          reduce using rule 22 (expression -> NUMBER .)
+    DONE            reduce using rule 22 (expression -> NUMBER .)
+    VAR             reduce using rule 22 (expression -> NUMBER .)
+    ID              reduce using rule 22 (expression -> NUMBER .)
+    FORWARD         reduce using rule 22 (expression -> NUMBER .)
+    IF              reduce using rule 22 (expression -> NUMBER .)
+    WHILE           reduce using rule 22 (expression -> NUMBER .)
+    RETURN          reduce using rule 22 (expression -> NUMBER .)
+    FINISH          reduce using rule 22 (expression -> NUMBER .)
+    RPAREN          reduce using rule 22 (expression -> NUMBER .)
+    RBRACKET        reduce using rule 22 (expression -> NUMBER .)
+    DO              reduce using rule 22 (expression -> NUMBER .)
 
 
 state 38
 
-    (33) statement -> RETURN expression .
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
+    (32) expression -> ID . LPAREN expression RPAREN
+    (33) expression -> ID . LBRACKET expression RBRACKET
+    (34) expression -> ID .
 
-    DONE            reduce using rule 33 (statement -> RETURN expression .)
-    VAR             reduce using rule 33 (statement -> RETURN expression .)
-    ID              reduce using rule 33 (statement -> RETURN expression .)
-    FORWARD         reduce using rule 33 (statement -> RETURN expression .)
-    IF              reduce using rule 33 (statement -> RETURN expression .)
-    WHILE           reduce using rule 33 (statement -> RETURN expression .)
-    RETURN          reduce using rule 33 (statement -> RETURN expression .)
-    FINISH          reduce using rule 33 (statement -> RETURN expression .)
-    PLUS            shift and go to state 48
-    MINUS           shift and go to state 49
-    TIMES           shift and go to state 50
-    DIVIDE          shift and go to state 51
+    LPAREN          shift and go to state 56
+    LBRACKET        shift and go to state 57
+    LT              reduce using rule 34 (expression -> ID .)
+    GT              reduce using rule 34 (expression -> ID .)
+    EQ              reduce using rule 34 (expression -> ID .)
+    PLUS            reduce using rule 34 (expression -> ID .)
+    MINUS           reduce using rule 34 (expression -> ID .)
+    TIMES           reduce using rule 34 (expression -> ID .)
+    DIVIDE          reduce using rule 34 (expression -> ID .)
+    DONE            reduce using rule 34 (expression -> ID .)
+    VAR             reduce using rule 34 (expression -> ID .)
+    ID              reduce using rule 34 (expression -> ID .)
+    FORWARD         reduce using rule 34 (expression -> ID .)
+    IF              reduce using rule 34 (expression -> ID .)
+    WHILE           reduce using rule 34 (expression -> ID .)
+    RETURN          reduce using rule 34 (expression -> ID .)
+    FINISH          reduce using rule 34 (expression -> ID .)
+    RPAREN          reduce using rule 34 (expression -> ID .)
+    RBRACKET        reduce using rule 34 (expression -> ID .)
+    DO              reduce using rule 34 (expression -> ID .)
 
 
 state 39
+
+    (30) statement -> WHILE condition . DO statements DONE
+    (31) statement -> WHILE condition . DO statements FINISH statements DONE
+
+    DO              shift and go to state 58
+
+
+state 40
+
+    (38) statement -> RETURN expression .
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
+
+    DONE            reduce using rule 38 (statement -> RETURN expression .)
+    VAR             reduce using rule 38 (statement -> RETURN expression .)
+    ID              reduce using rule 38 (statement -> RETURN expression .)
+    FORWARD         reduce using rule 38 (statement -> RETURN expression .)
+    IF              reduce using rule 38 (statement -> RETURN expression .)
+    WHILE           reduce using rule 38 (statement -> RETURN expression .)
+    RETURN          reduce using rule 38 (statement -> RETURN expression .)
+    FINISH          reduce using rule 38 (statement -> RETURN expression .)
+    PLUS            shift and go to state 51
+    MINUS           shift and go to state 52
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
+
+
+state 41
 
     (4) function -> FUNCTION ID LPAREN ID RPAREN DO statements DONE .
 
@@ -746,308 +805,89 @@ state 39
     $end            reduce using rule 4 (function -> FUNCTION ID LPAREN ID RPAREN DO statements DONE .)
 
 
-state 40
-
-    (9) statement -> ID ASSIGN expression .
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
-
-    DONE            reduce using rule 9 (statement -> ID ASSIGN expression .)
-    VAR             reduce using rule 9 (statement -> ID ASSIGN expression .)
-    ID              reduce using rule 9 (statement -> ID ASSIGN expression .)
-    FORWARD         reduce using rule 9 (statement -> ID ASSIGN expression .)
-    IF              reduce using rule 9 (statement -> ID ASSIGN expression .)
-    WHILE           reduce using rule 9 (statement -> ID ASSIGN expression .)
-    RETURN          reduce using rule 9 (statement -> ID ASSIGN expression .)
-    FINISH          reduce using rule 9 (statement -> ID ASSIGN expression .)
-    PLUS            shift and go to state 48
-    MINUS           shift and go to state 49
-    TIMES           shift and go to state 50
-    DIVIDE          shift and go to state 51
-
-
-state 41
-
-    (10) statement -> ID LPAREN expression . RPAREN ASSIGN expression
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
-
-    RPAREN          shift and go to state 55
-    PLUS            shift and go to state 48
-    MINUS           shift and go to state 49
-    TIMES           shift and go to state 50
-    DIVIDE          shift and go to state 51
-
-
 state 42
 
-    (8) statement -> VAR ID ASSIGN . NUMBER
+    (9) statement -> ID LPAREN expression . RPAREN
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    NUMBER          shift and go to state 56
+    RPAREN          shift and go to state 59
+    PLUS            shift and go to state 51
+    MINUS           shift and go to state 52
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
 
 
 state 43
 
-    (13) statement -> VAR ID LPAREN . NUMBER RPAREN
+    (35) statement -> ID ASSIGN expression .
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    NUMBER          shift and go to state 57
+    DONE            reduce using rule 35 (statement -> ID ASSIGN expression .)
+    VAR             reduce using rule 35 (statement -> ID ASSIGN expression .)
+    ID              reduce using rule 35 (statement -> ID ASSIGN expression .)
+    FORWARD         reduce using rule 35 (statement -> ID ASSIGN expression .)
+    IF              reduce using rule 35 (statement -> ID ASSIGN expression .)
+    WHILE           reduce using rule 35 (statement -> ID ASSIGN expression .)
+    RETURN          reduce using rule 35 (statement -> ID ASSIGN expression .)
+    FINISH          reduce using rule 35 (statement -> ID ASSIGN expression .)
+    PLUS            shift and go to state 51
+    MINUS           shift and go to state 52
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
 
 
 state 44
 
-    (23) statement -> IF condition DO . statements DONE
-    (24) statement -> IF condition DO . statements DONE ELDEF DO statements DONE
-    (25) statement -> IF condition DO . statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (6) statements -> . statements statement
-    (7) statements -> . statement
-    (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (36) statement -> ID LBRACKET expression . RBRACKET ASSIGN expression
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    VAR             shift and go to state 19
-    ID              shift and go to state 16
-    FORWARD         shift and go to state 20
-    IF              shift and go to state 21
-    WHILE           shift and go to state 22
-    RETURN          shift and go to state 23
+    RBRACKET        shift and go to state 60
+    PLUS            shift and go to state 51
+    MINUS           shift and go to state 52
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
 
-    statements                     shift and go to state 58
-    statement                      shift and go to state 18
 
 state 45
 
-    (26) condition -> expression LT . expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
+    (8) statement -> VAR ID ASSIGN . NUMBER
 
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
+    NUMBER          shift and go to state 61
 
-    expression                     shift and go to state 59
-    var_ref                        shift and go to state 35
 
 state 46
 
-    (27) condition -> expression GT . expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
+    (14) statement -> VAR ID LPAREN . NUMBER RPAREN
 
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
+    NUMBER          shift and go to state 62
 
-    expression                     shift and go to state 60
-    var_ref                        shift and go to state 35
 
 state 47
 
-    (28) condition -> expression EQ . expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
-
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
-
-    expression                     shift and go to state 61
-    var_ref                        shift and go to state 35
-
-state 48
-
-    (16) expression -> expression PLUS . expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
-
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
-
-    expression                     shift and go to state 62
-    var_ref                        shift and go to state 35
-
-state 49
-
-    (17) expression -> expression MINUS . expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
-
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
-
-    expression                     shift and go to state 63
-    var_ref                        shift and go to state 35
-
-state 50
-
-    (18) expression -> expression TIMES . expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
-
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
-
-    expression                     shift and go to state 64
-    var_ref                        shift and go to state 35
-
-state 51
-
-    (19) expression -> expression DIVIDE . expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
-
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
-
-    expression                     shift and go to state 65
-    var_ref                        shift and go to state 35
-
-state 52
-
-    (20) expression -> MINUS expression .
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
-
-    LT              reduce using rule 20 (expression -> MINUS expression .)
-    GT              reduce using rule 20 (expression -> MINUS expression .)
-    EQ              reduce using rule 20 (expression -> MINUS expression .)
-    PLUS            reduce using rule 20 (expression -> MINUS expression .)
-    MINUS           reduce using rule 20 (expression -> MINUS expression .)
-    TIMES           reduce using rule 20 (expression -> MINUS expression .)
-    DIVIDE          reduce using rule 20 (expression -> MINUS expression .)
-    DONE            reduce using rule 20 (expression -> MINUS expression .)
-    VAR             reduce using rule 20 (expression -> MINUS expression .)
-    ID              reduce using rule 20 (expression -> MINUS expression .)
-    FORWARD         reduce using rule 20 (expression -> MINUS expression .)
-    IF              reduce using rule 20 (expression -> MINUS expression .)
-    WHILE           reduce using rule 20 (expression -> MINUS expression .)
-    RETURN          reduce using rule 20 (expression -> MINUS expression .)
-    FINISH          reduce using rule 20 (expression -> MINUS expression .)
-    RPAREN          reduce using rule 20 (expression -> MINUS expression .)
-    DO              reduce using rule 20 (expression -> MINUS expression .)
-
-  ! PLUS            [ shift and go to state 48 ]
-  ! MINUS           [ shift and go to state 49 ]
-  ! TIMES           [ shift and go to state 50 ]
-  ! DIVIDE          [ shift and go to state 51 ]
-
-
-state 53
-
-    (31) expression -> ID LPAREN . expression RPAREN
-    (15) var_ref -> ID LPAREN . expression RPAREN
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
-
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
-
-    expression                     shift and go to state 66
-    var_ref                        shift and go to state 35
-
-state 54
-
-    (29) statement -> WHILE condition DO . statements DONE
-    (30) statement -> WHILE condition DO . statements FINISH statements DONE
+    (23) statement -> IF condition DO . statements DONE if_else_chain
     (6) statements -> . statements statement
     (7) statements -> . statement
     (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
 
     VAR             shift and go to state 19
     ID              shift and go to state 16
@@ -1056,17 +896,300 @@ state 54
     WHILE           shift and go to state 22
     RETURN          shift and go to state 23
 
-    statements                     shift and go to state 67
+    statements                     shift and go to state 63
     statement                      shift and go to state 18
+
+state 48
+
+    (27) condition -> expression LT . expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
+
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
+
+    expression                     shift and go to state 64
+
+state 49
+
+    (28) condition -> expression GT . expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
+
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
+
+    expression                     shift and go to state 65
+
+state 50
+
+    (29) condition -> expression EQ . expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
+
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
+
+    expression                     shift and go to state 66
+
+state 51
+
+    (17) expression -> expression PLUS . expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
+
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
+
+    expression                     shift and go to state 67
+
+state 52
+
+    (18) expression -> expression MINUS . expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
+
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
+
+    expression                     shift and go to state 68
+
+state 53
+
+    (19) expression -> expression TIMES . expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
+
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
+
+    expression                     shift and go to state 69
+
+state 54
+
+    (20) expression -> expression DIVIDE . expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
+
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
+
+    expression                     shift and go to state 70
 
 state 55
 
-    (10) statement -> ID LPAREN expression RPAREN . ASSIGN expression
+    (21) expression -> MINUS expression .
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    ASSIGN          shift and go to state 68
+    LT              reduce using rule 21 (expression -> MINUS expression .)
+    GT              reduce using rule 21 (expression -> MINUS expression .)
+    EQ              reduce using rule 21 (expression -> MINUS expression .)
+    PLUS            reduce using rule 21 (expression -> MINUS expression .)
+    MINUS           reduce using rule 21 (expression -> MINUS expression .)
+    TIMES           reduce using rule 21 (expression -> MINUS expression .)
+    DIVIDE          reduce using rule 21 (expression -> MINUS expression .)
+    DONE            reduce using rule 21 (expression -> MINUS expression .)
+    VAR             reduce using rule 21 (expression -> MINUS expression .)
+    ID              reduce using rule 21 (expression -> MINUS expression .)
+    FORWARD         reduce using rule 21 (expression -> MINUS expression .)
+    IF              reduce using rule 21 (expression -> MINUS expression .)
+    WHILE           reduce using rule 21 (expression -> MINUS expression .)
+    RETURN          reduce using rule 21 (expression -> MINUS expression .)
+    FINISH          reduce using rule 21 (expression -> MINUS expression .)
+    RPAREN          reduce using rule 21 (expression -> MINUS expression .)
+    RBRACKET        reduce using rule 21 (expression -> MINUS expression .)
+    DO              reduce using rule 21 (expression -> MINUS expression .)
+
+  ! PLUS            [ shift and go to state 51 ]
+  ! MINUS           [ shift and go to state 52 ]
+  ! TIMES           [ shift and go to state 53 ]
+  ! DIVIDE          [ shift and go to state 54 ]
 
 
 state 56
+
+    (32) expression -> ID LPAREN . expression RPAREN
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
+
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
+
+    expression                     shift and go to state 71
+
+state 57
+
+    (33) expression -> ID LBRACKET . expression RBRACKET
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
+
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
+
+    expression                     shift and go to state 72
+
+state 58
+
+    (30) statement -> WHILE condition DO . statements DONE
+    (31) statement -> WHILE condition DO . statements FINISH statements DONE
+    (6) statements -> . statements statement
+    (7) statements -> . statement
+    (8) statement -> . VAR ID ASSIGN NUMBER
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
+
+    VAR             shift and go to state 19
+    ID              shift and go to state 16
+    FORWARD         shift and go to state 20
+    IF              shift and go to state 21
+    WHILE           shift and go to state 22
+    RETURN          shift and go to state 23
+
+    statements                     shift and go to state 73
+    statement                      shift and go to state 18
+
+state 59
+
+    (9) statement -> ID LPAREN expression RPAREN .
+
+    DONE            reduce using rule 9 (statement -> ID LPAREN expression RPAREN .)
+    VAR             reduce using rule 9 (statement -> ID LPAREN expression RPAREN .)
+    ID              reduce using rule 9 (statement -> ID LPAREN expression RPAREN .)
+    FORWARD         reduce using rule 9 (statement -> ID LPAREN expression RPAREN .)
+    IF              reduce using rule 9 (statement -> ID LPAREN expression RPAREN .)
+    WHILE           reduce using rule 9 (statement -> ID LPAREN expression RPAREN .)
+    RETURN          reduce using rule 9 (statement -> ID LPAREN expression RPAREN .)
+    FINISH          reduce using rule 9 (statement -> ID LPAREN expression RPAREN .)
+
+
+state 60
+
+    (36) statement -> ID LBRACKET expression RBRACKET . ASSIGN expression
+
+    ASSIGN          shift and go to state 74
+
+
+state 61
 
     (8) statement -> VAR ID ASSIGN NUMBER .
 
@@ -1080,406 +1203,267 @@ state 56
     FINISH          reduce using rule 8 (statement -> VAR ID ASSIGN NUMBER .)
 
 
-state 57
-
-    (13) statement -> VAR ID LPAREN NUMBER . RPAREN
-
-    RPAREN          shift and go to state 69
-
-
-state 58
-
-    (23) statement -> IF condition DO statements . DONE
-    (24) statement -> IF condition DO statements . DONE ELDEF DO statements DONE
-    (25) statement -> IF condition DO statements . DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (6) statements -> statements . statement
-    (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
-
-    DONE            shift and go to state 70
-    VAR             shift and go to state 19
-    ID              shift and go to state 16
-    FORWARD         shift and go to state 20
-    IF              shift and go to state 21
-    WHILE           shift and go to state 22
-    RETURN          shift and go to state 23
-
-    statement                      shift and go to state 28
-
-state 59
-
-    (26) condition -> expression LT expression .
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
-
-    DO              reduce using rule 26 (condition -> expression LT expression .)
-    PLUS            shift and go to state 48
-    MINUS           shift and go to state 49
-    TIMES           shift and go to state 50
-    DIVIDE          shift and go to state 51
-
-
-state 60
-
-    (27) condition -> expression GT expression .
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
-
-    DO              reduce using rule 27 (condition -> expression GT expression .)
-    PLUS            shift and go to state 48
-    MINUS           shift and go to state 49
-    TIMES           shift and go to state 50
-    DIVIDE          shift and go to state 51
-
-
-state 61
-
-    (28) condition -> expression EQ expression .
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
-
-    DO              reduce using rule 28 (condition -> expression EQ expression .)
-    PLUS            shift and go to state 48
-    MINUS           shift and go to state 49
-    TIMES           shift and go to state 50
-    DIVIDE          shift and go to state 51
-
-
 state 62
 
-    (16) expression -> expression PLUS expression .
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
+    (14) statement -> VAR ID LPAREN NUMBER . RPAREN
 
-    LT              reduce using rule 16 (expression -> expression PLUS expression .)
-    GT              reduce using rule 16 (expression -> expression PLUS expression .)
-    EQ              reduce using rule 16 (expression -> expression PLUS expression .)
-    PLUS            reduce using rule 16 (expression -> expression PLUS expression .)
-    MINUS           reduce using rule 16 (expression -> expression PLUS expression .)
-    DONE            reduce using rule 16 (expression -> expression PLUS expression .)
-    VAR             reduce using rule 16 (expression -> expression PLUS expression .)
-    ID              reduce using rule 16 (expression -> expression PLUS expression .)
-    FORWARD         reduce using rule 16 (expression -> expression PLUS expression .)
-    IF              reduce using rule 16 (expression -> expression PLUS expression .)
-    WHILE           reduce using rule 16 (expression -> expression PLUS expression .)
-    RETURN          reduce using rule 16 (expression -> expression PLUS expression .)
-    FINISH          reduce using rule 16 (expression -> expression PLUS expression .)
-    RPAREN          reduce using rule 16 (expression -> expression PLUS expression .)
-    DO              reduce using rule 16 (expression -> expression PLUS expression .)
-    TIMES           shift and go to state 50
-    DIVIDE          shift and go to state 51
-
-  ! TIMES           [ reduce using rule 16 (expression -> expression PLUS expression .) ]
-  ! DIVIDE          [ reduce using rule 16 (expression -> expression PLUS expression .) ]
-  ! PLUS            [ shift and go to state 48 ]
-  ! MINUS           [ shift and go to state 49 ]
+    RPAREN          shift and go to state 75
 
 
 state 63
 
-    (17) expression -> expression MINUS expression .
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
+    (23) statement -> IF condition DO statements . DONE if_else_chain
+    (6) statements -> statements . statement
+    (8) statement -> . VAR ID ASSIGN NUMBER
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
 
-    LT              reduce using rule 17 (expression -> expression MINUS expression .)
-    GT              reduce using rule 17 (expression -> expression MINUS expression .)
-    EQ              reduce using rule 17 (expression -> expression MINUS expression .)
-    PLUS            reduce using rule 17 (expression -> expression MINUS expression .)
-    MINUS           reduce using rule 17 (expression -> expression MINUS expression .)
-    DONE            reduce using rule 17 (expression -> expression MINUS expression .)
-    VAR             reduce using rule 17 (expression -> expression MINUS expression .)
-    ID              reduce using rule 17 (expression -> expression MINUS expression .)
-    FORWARD         reduce using rule 17 (expression -> expression MINUS expression .)
-    IF              reduce using rule 17 (expression -> expression MINUS expression .)
-    WHILE           reduce using rule 17 (expression -> expression MINUS expression .)
-    RETURN          reduce using rule 17 (expression -> expression MINUS expression .)
-    FINISH          reduce using rule 17 (expression -> expression MINUS expression .)
-    RPAREN          reduce using rule 17 (expression -> expression MINUS expression .)
-    DO              reduce using rule 17 (expression -> expression MINUS expression .)
-    TIMES           shift and go to state 50
-    DIVIDE          shift and go to state 51
+    DONE            shift and go to state 76
+    VAR             shift and go to state 19
+    ID              shift and go to state 16
+    FORWARD         shift and go to state 20
+    IF              shift and go to state 21
+    WHILE           shift and go to state 22
+    RETURN          shift and go to state 23
 
-  ! TIMES           [ reduce using rule 17 (expression -> expression MINUS expression .) ]
-  ! DIVIDE          [ reduce using rule 17 (expression -> expression MINUS expression .) ]
-  ! PLUS            [ shift and go to state 48 ]
-  ! MINUS           [ shift and go to state 49 ]
-
+    statement                      shift and go to state 29
 
 state 64
 
-    (18) expression -> expression TIMES expression .
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
+    (27) condition -> expression LT expression .
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    LT              reduce using rule 18 (expression -> expression TIMES expression .)
-    GT              reduce using rule 18 (expression -> expression TIMES expression .)
-    EQ              reduce using rule 18 (expression -> expression TIMES expression .)
-    PLUS            reduce using rule 18 (expression -> expression TIMES expression .)
-    MINUS           reduce using rule 18 (expression -> expression TIMES expression .)
-    TIMES           reduce using rule 18 (expression -> expression TIMES expression .)
-    DIVIDE          reduce using rule 18 (expression -> expression TIMES expression .)
-    DONE            reduce using rule 18 (expression -> expression TIMES expression .)
-    VAR             reduce using rule 18 (expression -> expression TIMES expression .)
-    ID              reduce using rule 18 (expression -> expression TIMES expression .)
-    FORWARD         reduce using rule 18 (expression -> expression TIMES expression .)
-    IF              reduce using rule 18 (expression -> expression TIMES expression .)
-    WHILE           reduce using rule 18 (expression -> expression TIMES expression .)
-    RETURN          reduce using rule 18 (expression -> expression TIMES expression .)
-    FINISH          reduce using rule 18 (expression -> expression TIMES expression .)
-    RPAREN          reduce using rule 18 (expression -> expression TIMES expression .)
-    DO              reduce using rule 18 (expression -> expression TIMES expression .)
-
-  ! PLUS            [ shift and go to state 48 ]
-  ! MINUS           [ shift and go to state 49 ]
-  ! TIMES           [ shift and go to state 50 ]
-  ! DIVIDE          [ shift and go to state 51 ]
+    DO              reduce using rule 27 (condition -> expression LT expression .)
+    PLUS            shift and go to state 51
+    MINUS           shift and go to state 52
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
 
 
 state 65
 
-    (19) expression -> expression DIVIDE expression .
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
+    (28) condition -> expression GT expression .
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    LT              reduce using rule 19 (expression -> expression DIVIDE expression .)
-    GT              reduce using rule 19 (expression -> expression DIVIDE expression .)
-    EQ              reduce using rule 19 (expression -> expression DIVIDE expression .)
-    PLUS            reduce using rule 19 (expression -> expression DIVIDE expression .)
-    MINUS           reduce using rule 19 (expression -> expression DIVIDE expression .)
-    TIMES           reduce using rule 19 (expression -> expression DIVIDE expression .)
-    DIVIDE          reduce using rule 19 (expression -> expression DIVIDE expression .)
-    DONE            reduce using rule 19 (expression -> expression DIVIDE expression .)
-    VAR             reduce using rule 19 (expression -> expression DIVIDE expression .)
-    ID              reduce using rule 19 (expression -> expression DIVIDE expression .)
-    FORWARD         reduce using rule 19 (expression -> expression DIVIDE expression .)
-    IF              reduce using rule 19 (expression -> expression DIVIDE expression .)
-    WHILE           reduce using rule 19 (expression -> expression DIVIDE expression .)
-    RETURN          reduce using rule 19 (expression -> expression DIVIDE expression .)
-    FINISH          reduce using rule 19 (expression -> expression DIVIDE expression .)
-    RPAREN          reduce using rule 19 (expression -> expression DIVIDE expression .)
-    DO              reduce using rule 19 (expression -> expression DIVIDE expression .)
-
-  ! PLUS            [ shift and go to state 48 ]
-  ! MINUS           [ shift and go to state 49 ]
-  ! TIMES           [ shift and go to state 50 ]
-  ! DIVIDE          [ shift and go to state 51 ]
+    DO              reduce using rule 28 (condition -> expression GT expression .)
+    PLUS            shift and go to state 51
+    MINUS           shift and go to state 52
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
 
 
 state 66
 
-    (31) expression -> ID LPAREN expression . RPAREN
-    (15) var_ref -> ID LPAREN expression . RPAREN
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
+    (29) condition -> expression EQ expression .
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    RPAREN          shift and go to state 71
-    PLUS            shift and go to state 48
-    MINUS           shift and go to state 49
-    TIMES           shift and go to state 50
-    DIVIDE          shift and go to state 51
+    DO              reduce using rule 29 (condition -> expression EQ expression .)
+    PLUS            shift and go to state 51
+    MINUS           shift and go to state 52
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
 
 
 state 67
 
-    (29) statement -> WHILE condition DO statements . DONE
-    (30) statement -> WHILE condition DO statements . FINISH statements DONE
-    (6) statements -> statements . statement
-    (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (17) expression -> expression PLUS expression .
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    DONE            shift and go to state 72
-    FINISH          shift and go to state 73
-    VAR             shift and go to state 19
-    ID              shift and go to state 16
-    FORWARD         shift and go to state 20
-    IF              shift and go to state 21
-    WHILE           shift and go to state 22
-    RETURN          shift and go to state 23
+    LT              reduce using rule 17 (expression -> expression PLUS expression .)
+    GT              reduce using rule 17 (expression -> expression PLUS expression .)
+    EQ              reduce using rule 17 (expression -> expression PLUS expression .)
+    PLUS            reduce using rule 17 (expression -> expression PLUS expression .)
+    MINUS           reduce using rule 17 (expression -> expression PLUS expression .)
+    DONE            reduce using rule 17 (expression -> expression PLUS expression .)
+    VAR             reduce using rule 17 (expression -> expression PLUS expression .)
+    ID              reduce using rule 17 (expression -> expression PLUS expression .)
+    FORWARD         reduce using rule 17 (expression -> expression PLUS expression .)
+    IF              reduce using rule 17 (expression -> expression PLUS expression .)
+    WHILE           reduce using rule 17 (expression -> expression PLUS expression .)
+    RETURN          reduce using rule 17 (expression -> expression PLUS expression .)
+    FINISH          reduce using rule 17 (expression -> expression PLUS expression .)
+    RPAREN          reduce using rule 17 (expression -> expression PLUS expression .)
+    RBRACKET        reduce using rule 17 (expression -> expression PLUS expression .)
+    DO              reduce using rule 17 (expression -> expression PLUS expression .)
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
 
-    statement                      shift and go to state 28
+  ! TIMES           [ reduce using rule 17 (expression -> expression PLUS expression .) ]
+  ! DIVIDE          [ reduce using rule 17 (expression -> expression PLUS expression .) ]
+  ! PLUS            [ shift and go to state 51 ]
+  ! MINUS           [ shift and go to state 52 ]
+
 
 state 68
 
-    (10) statement -> ID LPAREN expression RPAREN ASSIGN . expression
-    (16) expression -> . expression PLUS expression
-    (17) expression -> . expression MINUS expression
-    (18) expression -> . expression TIMES expression
-    (19) expression -> . expression DIVIDE expression
-    (20) expression -> . MINUS expression
-    (21) expression -> . NUMBER
-    (22) expression -> . var_ref
-    (31) expression -> . ID LPAREN expression RPAREN
-    (14) var_ref -> . ID
-    (15) var_ref -> . ID LPAREN expression RPAREN
+    (18) expression -> expression MINUS expression .
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    MINUS           shift and go to state 33
-    NUMBER          shift and go to state 34
-    ID              shift and go to state 36
+    LT              reduce using rule 18 (expression -> expression MINUS expression .)
+    GT              reduce using rule 18 (expression -> expression MINUS expression .)
+    EQ              reduce using rule 18 (expression -> expression MINUS expression .)
+    PLUS            reduce using rule 18 (expression -> expression MINUS expression .)
+    MINUS           reduce using rule 18 (expression -> expression MINUS expression .)
+    DONE            reduce using rule 18 (expression -> expression MINUS expression .)
+    VAR             reduce using rule 18 (expression -> expression MINUS expression .)
+    ID              reduce using rule 18 (expression -> expression MINUS expression .)
+    FORWARD         reduce using rule 18 (expression -> expression MINUS expression .)
+    IF              reduce using rule 18 (expression -> expression MINUS expression .)
+    WHILE           reduce using rule 18 (expression -> expression MINUS expression .)
+    RETURN          reduce using rule 18 (expression -> expression MINUS expression .)
+    FINISH          reduce using rule 18 (expression -> expression MINUS expression .)
+    RPAREN          reduce using rule 18 (expression -> expression MINUS expression .)
+    RBRACKET        reduce using rule 18 (expression -> expression MINUS expression .)
+    DO              reduce using rule 18 (expression -> expression MINUS expression .)
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
 
-    expression                     shift and go to state 74
-    var_ref                        shift and go to state 35
+  ! TIMES           [ reduce using rule 18 (expression -> expression MINUS expression .) ]
+  ! DIVIDE          [ reduce using rule 18 (expression -> expression MINUS expression .) ]
+  ! PLUS            [ shift and go to state 51 ]
+  ! MINUS           [ shift and go to state 52 ]
+
 
 state 69
 
-    (13) statement -> VAR ID LPAREN NUMBER RPAREN .
+    (19) expression -> expression TIMES expression .
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    DONE            reduce using rule 13 (statement -> VAR ID LPAREN NUMBER RPAREN .)
-    VAR             reduce using rule 13 (statement -> VAR ID LPAREN NUMBER RPAREN .)
-    ID              reduce using rule 13 (statement -> VAR ID LPAREN NUMBER RPAREN .)
-    FORWARD         reduce using rule 13 (statement -> VAR ID LPAREN NUMBER RPAREN .)
-    IF              reduce using rule 13 (statement -> VAR ID LPAREN NUMBER RPAREN .)
-    WHILE           reduce using rule 13 (statement -> VAR ID LPAREN NUMBER RPAREN .)
-    RETURN          reduce using rule 13 (statement -> VAR ID LPAREN NUMBER RPAREN .)
-    FINISH          reduce using rule 13 (statement -> VAR ID LPAREN NUMBER RPAREN .)
+    LT              reduce using rule 19 (expression -> expression TIMES expression .)
+    GT              reduce using rule 19 (expression -> expression TIMES expression .)
+    EQ              reduce using rule 19 (expression -> expression TIMES expression .)
+    PLUS            reduce using rule 19 (expression -> expression TIMES expression .)
+    MINUS           reduce using rule 19 (expression -> expression TIMES expression .)
+    TIMES           reduce using rule 19 (expression -> expression TIMES expression .)
+    DIVIDE          reduce using rule 19 (expression -> expression TIMES expression .)
+    DONE            reduce using rule 19 (expression -> expression TIMES expression .)
+    VAR             reduce using rule 19 (expression -> expression TIMES expression .)
+    ID              reduce using rule 19 (expression -> expression TIMES expression .)
+    FORWARD         reduce using rule 19 (expression -> expression TIMES expression .)
+    IF              reduce using rule 19 (expression -> expression TIMES expression .)
+    WHILE           reduce using rule 19 (expression -> expression TIMES expression .)
+    RETURN          reduce using rule 19 (expression -> expression TIMES expression .)
+    FINISH          reduce using rule 19 (expression -> expression TIMES expression .)
+    RPAREN          reduce using rule 19 (expression -> expression TIMES expression .)
+    RBRACKET        reduce using rule 19 (expression -> expression TIMES expression .)
+    DO              reduce using rule 19 (expression -> expression TIMES expression .)
+
+  ! PLUS            [ shift and go to state 51 ]
+  ! MINUS           [ shift and go to state 52 ]
+  ! TIMES           [ shift and go to state 53 ]
+  ! DIVIDE          [ shift and go to state 54 ]
 
 
 state 70
 
-    (23) statement -> IF condition DO statements DONE .
-    (24) statement -> IF condition DO statements DONE . ELDEF DO statements DONE
-    (25) statement -> IF condition DO statements DONE . ELDEF DO statements DONE ELUND DO statements DONE
+    (20) expression -> expression DIVIDE expression .
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    DONE            reduce using rule 23 (statement -> IF condition DO statements DONE .)
-    VAR             reduce using rule 23 (statement -> IF condition DO statements DONE .)
-    ID              reduce using rule 23 (statement -> IF condition DO statements DONE .)
-    FORWARD         reduce using rule 23 (statement -> IF condition DO statements DONE .)
-    IF              reduce using rule 23 (statement -> IF condition DO statements DONE .)
-    WHILE           reduce using rule 23 (statement -> IF condition DO statements DONE .)
-    RETURN          reduce using rule 23 (statement -> IF condition DO statements DONE .)
-    FINISH          reduce using rule 23 (statement -> IF condition DO statements DONE .)
-    ELDEF           shift and go to state 75
+    LT              reduce using rule 20 (expression -> expression DIVIDE expression .)
+    GT              reduce using rule 20 (expression -> expression DIVIDE expression .)
+    EQ              reduce using rule 20 (expression -> expression DIVIDE expression .)
+    PLUS            reduce using rule 20 (expression -> expression DIVIDE expression .)
+    MINUS           reduce using rule 20 (expression -> expression DIVIDE expression .)
+    TIMES           reduce using rule 20 (expression -> expression DIVIDE expression .)
+    DIVIDE          reduce using rule 20 (expression -> expression DIVIDE expression .)
+    DONE            reduce using rule 20 (expression -> expression DIVIDE expression .)
+    VAR             reduce using rule 20 (expression -> expression DIVIDE expression .)
+    ID              reduce using rule 20 (expression -> expression DIVIDE expression .)
+    FORWARD         reduce using rule 20 (expression -> expression DIVIDE expression .)
+    IF              reduce using rule 20 (expression -> expression DIVIDE expression .)
+    WHILE           reduce using rule 20 (expression -> expression DIVIDE expression .)
+    RETURN          reduce using rule 20 (expression -> expression DIVIDE expression .)
+    FINISH          reduce using rule 20 (expression -> expression DIVIDE expression .)
+    RPAREN          reduce using rule 20 (expression -> expression DIVIDE expression .)
+    RBRACKET        reduce using rule 20 (expression -> expression DIVIDE expression .)
+    DO              reduce using rule 20 (expression -> expression DIVIDE expression .)
+
+  ! PLUS            [ shift and go to state 51 ]
+  ! MINUS           [ shift and go to state 52 ]
+  ! TIMES           [ shift and go to state 53 ]
+  ! DIVIDE          [ shift and go to state 54 ]
 
 
 state 71
 
-    (31) expression -> ID LPAREN expression RPAREN .
-    (15) var_ref -> ID LPAREN expression RPAREN .
+    (32) expression -> ID LPAREN expression . RPAREN
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-  ! reduce/reduce conflict for LT resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for GT resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for EQ resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for PLUS resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for MINUS resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for TIMES resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for DIVIDE resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for DONE resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for VAR resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for ID resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for FORWARD resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for IF resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for WHILE resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for RETURN resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for FINISH resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for RPAREN resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-  ! reduce/reduce conflict for DO resolved using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    LT              reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    GT              reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    EQ              reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    PLUS            reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    MINUS           reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    TIMES           reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    DIVIDE          reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    DONE            reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    VAR             reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    ID              reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    FORWARD         reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    IF              reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    WHILE           reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    RETURN          reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    FINISH          reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    RPAREN          reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-    DO              reduce using rule 15 (var_ref -> ID LPAREN expression RPAREN .)
-
-  ! LT              [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! GT              [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! EQ              [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! PLUS            [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! MINUS           [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! TIMES           [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! DIVIDE          [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! DONE            [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! VAR             [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! ID              [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! FORWARD         [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! IF              [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! WHILE           [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! RETURN          [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! FINISH          [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! RPAREN          [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
-  ! DO              [ reduce using rule 31 (expression -> ID LPAREN expression RPAREN .) ]
+    RPAREN          shift and go to state 77
+    PLUS            shift and go to state 51
+    MINUS           shift and go to state 52
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
 
 
 state 72
 
-    (29) statement -> WHILE condition DO statements DONE .
+    (33) expression -> ID LBRACKET expression . RBRACKET
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    DONE            reduce using rule 29 (statement -> WHILE condition DO statements DONE .)
-    VAR             reduce using rule 29 (statement -> WHILE condition DO statements DONE .)
-    ID              reduce using rule 29 (statement -> WHILE condition DO statements DONE .)
-    FORWARD         reduce using rule 29 (statement -> WHILE condition DO statements DONE .)
-    IF              reduce using rule 29 (statement -> WHILE condition DO statements DONE .)
-    WHILE           reduce using rule 29 (statement -> WHILE condition DO statements DONE .)
-    RETURN          reduce using rule 29 (statement -> WHILE condition DO statements DONE .)
-    FINISH          reduce using rule 29 (statement -> WHILE condition DO statements DONE .)
+    RBRACKET        shift and go to state 78
+    PLUS            shift and go to state 51
+    MINUS           shift and go to state 52
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
 
 
 state 73
 
-    (30) statement -> WHILE condition DO statements FINISH . statements DONE
-    (6) statements -> . statements statement
-    (7) statements -> . statement
+    (30) statement -> WHILE condition DO statements . DONE
+    (31) statement -> WHILE condition DO statements . FINISH statements DONE
+    (6) statements -> statements . statement
     (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
 
+    DONE            shift and go to state 79
+    FINISH          shift and go to state 80
     VAR             shift and go to state 19
     ID              shift and go to state 16
     FORWARD         shift and go to state 20
@@ -1487,131 +1471,145 @@ state 73
     WHILE           shift and go to state 22
     RETURN          shift and go to state 23
 
-    statements                     shift and go to state 76
-    statement                      shift and go to state 18
+    statement                      shift and go to state 29
 
 state 74
 
-    (10) statement -> ID LPAREN expression RPAREN ASSIGN expression .
-    (16) expression -> expression . PLUS expression
-    (17) expression -> expression . MINUS expression
-    (18) expression -> expression . TIMES expression
-    (19) expression -> expression . DIVIDE expression
+    (36) statement -> ID LBRACKET expression RBRACKET ASSIGN . expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
 
-    DONE            reduce using rule 10 (statement -> ID LPAREN expression RPAREN ASSIGN expression .)
-    VAR             reduce using rule 10 (statement -> ID LPAREN expression RPAREN ASSIGN expression .)
-    ID              reduce using rule 10 (statement -> ID LPAREN expression RPAREN ASSIGN expression .)
-    FORWARD         reduce using rule 10 (statement -> ID LPAREN expression RPAREN ASSIGN expression .)
-    IF              reduce using rule 10 (statement -> ID LPAREN expression RPAREN ASSIGN expression .)
-    WHILE           reduce using rule 10 (statement -> ID LPAREN expression RPAREN ASSIGN expression .)
-    RETURN          reduce using rule 10 (statement -> ID LPAREN expression RPAREN ASSIGN expression .)
-    FINISH          reduce using rule 10 (statement -> ID LPAREN expression RPAREN ASSIGN expression .)
-    PLUS            shift and go to state 48
-    MINUS           shift and go to state 49
-    TIMES           shift and go to state 50
-    DIVIDE          shift and go to state 51
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
 
+    expression                     shift and go to state 81
 
 state 75
 
-    (24) statement -> IF condition DO statements DONE ELDEF . DO statements DONE
-    (25) statement -> IF condition DO statements DONE ELDEF . DO statements DONE ELUND DO statements DONE
+    (14) statement -> VAR ID LPAREN NUMBER RPAREN .
 
-    DO              shift and go to state 77
+    DONE            reduce using rule 14 (statement -> VAR ID LPAREN NUMBER RPAREN .)
+    VAR             reduce using rule 14 (statement -> VAR ID LPAREN NUMBER RPAREN .)
+    ID              reduce using rule 14 (statement -> VAR ID LPAREN NUMBER RPAREN .)
+    FORWARD         reduce using rule 14 (statement -> VAR ID LPAREN NUMBER RPAREN .)
+    IF              reduce using rule 14 (statement -> VAR ID LPAREN NUMBER RPAREN .)
+    WHILE           reduce using rule 14 (statement -> VAR ID LPAREN NUMBER RPAREN .)
+    RETURN          reduce using rule 14 (statement -> VAR ID LPAREN NUMBER RPAREN .)
+    FINISH          reduce using rule 14 (statement -> VAR ID LPAREN NUMBER RPAREN .)
 
 
 state 76
 
-    (30) statement -> WHILE condition DO statements FINISH statements . DONE
-    (6) statements -> statements . statement
-    (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (23) statement -> IF condition DO statements DONE . if_else_chain
+    (24) if_else_chain -> .
+    (25) if_else_chain -> . ELUND condition DO statements DONE if_else_chain
+    (26) if_else_chain -> . ELDEF DO statements DONE
 
-    DONE            shift and go to state 78
-    VAR             shift and go to state 19
-    ID              shift and go to state 16
-    FORWARD         shift and go to state 20
-    IF              shift and go to state 21
-    WHILE           shift and go to state 22
-    RETURN          shift and go to state 23
+    DONE            reduce using rule 24 (if_else_chain -> .)
+    VAR             reduce using rule 24 (if_else_chain -> .)
+    ID              reduce using rule 24 (if_else_chain -> .)
+    FORWARD         reduce using rule 24 (if_else_chain -> .)
+    IF              reduce using rule 24 (if_else_chain -> .)
+    WHILE           reduce using rule 24 (if_else_chain -> .)
+    RETURN          reduce using rule 24 (if_else_chain -> .)
+    FINISH          reduce using rule 24 (if_else_chain -> .)
+    ELUND           shift and go to state 83
+    ELDEF           shift and go to state 84
 
-    statement                      shift and go to state 28
+    if_else_chain                  shift and go to state 82
 
 state 77
 
-    (24) statement -> IF condition DO statements DONE ELDEF DO . statements DONE
-    (25) statement -> IF condition DO statements DONE ELDEF DO . statements DONE ELUND DO statements DONE
-    (6) statements -> . statements statement
-    (7) statements -> . statement
-    (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (32) expression -> ID LPAREN expression RPAREN .
 
-    VAR             shift and go to state 19
-    ID              shift and go to state 16
-    FORWARD         shift and go to state 20
-    IF              shift and go to state 21
-    WHILE           shift and go to state 22
-    RETURN          shift and go to state 23
+    LT              reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    GT              reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    EQ              reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    PLUS            reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    MINUS           reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    TIMES           reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    DIVIDE          reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    DONE            reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    VAR             reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    ID              reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    FORWARD         reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    IF              reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    WHILE           reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    RETURN          reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    FINISH          reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    RBRACKET        reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
+    DO              reduce using rule 32 (expression -> ID LPAREN expression RPAREN .)
 
-    statements                     shift and go to state 79
-    statement                      shift and go to state 18
 
 state 78
 
-    (30) statement -> WHILE condition DO statements FINISH statements DONE .
+    (33) expression -> ID LBRACKET expression RBRACKET .
 
-    DONE            reduce using rule 30 (statement -> WHILE condition DO statements FINISH statements DONE .)
-    VAR             reduce using rule 30 (statement -> WHILE condition DO statements FINISH statements DONE .)
-    ID              reduce using rule 30 (statement -> WHILE condition DO statements FINISH statements DONE .)
-    FORWARD         reduce using rule 30 (statement -> WHILE condition DO statements FINISH statements DONE .)
-    IF              reduce using rule 30 (statement -> WHILE condition DO statements FINISH statements DONE .)
-    WHILE           reduce using rule 30 (statement -> WHILE condition DO statements FINISH statements DONE .)
-    RETURN          reduce using rule 30 (statement -> WHILE condition DO statements FINISH statements DONE .)
-    FINISH          reduce using rule 30 (statement -> WHILE condition DO statements FINISH statements DONE .)
+    LT              reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    GT              reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    EQ              reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    PLUS            reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    MINUS           reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    TIMES           reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    DIVIDE          reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    DONE            reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    VAR             reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    ID              reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    FORWARD         reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    IF              reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    WHILE           reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    RETURN          reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    FINISH          reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    RPAREN          reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    RBRACKET        reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
+    DO              reduce using rule 33 (expression -> ID LBRACKET expression RBRACKET .)
 
 
 state 79
 
-    (24) statement -> IF condition DO statements DONE ELDEF DO statements . DONE
-    (25) statement -> IF condition DO statements DONE ELDEF DO statements . DONE ELUND DO statements DONE
-    (6) statements -> statements . statement
-    (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (30) statement -> WHILE condition DO statements DONE .
 
-    DONE            shift and go to state 80
+    DONE            reduce using rule 30 (statement -> WHILE condition DO statements DONE .)
+    VAR             reduce using rule 30 (statement -> WHILE condition DO statements DONE .)
+    ID              reduce using rule 30 (statement -> WHILE condition DO statements DONE .)
+    FORWARD         reduce using rule 30 (statement -> WHILE condition DO statements DONE .)
+    IF              reduce using rule 30 (statement -> WHILE condition DO statements DONE .)
+    WHILE           reduce using rule 30 (statement -> WHILE condition DO statements DONE .)
+    RETURN          reduce using rule 30 (statement -> WHILE condition DO statements DONE .)
+    FINISH          reduce using rule 30 (statement -> WHILE condition DO statements DONE .)
+
+
+state 80
+
+    (31) statement -> WHILE condition DO statements FINISH . statements DONE
+    (6) statements -> . statements statement
+    (7) statements -> . statement
+    (8) statement -> . VAR ID ASSIGN NUMBER
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
+
     VAR             shift and go to state 19
     ID              shift and go to state 16
     FORWARD         shift and go to state 20
@@ -1619,79 +1617,97 @@ state 79
     WHILE           shift and go to state 22
     RETURN          shift and go to state 23
 
-    statement                      shift and go to state 28
-
-state 80
-
-    (24) statement -> IF condition DO statements DONE ELDEF DO statements DONE .
-    (25) statement -> IF condition DO statements DONE ELDEF DO statements DONE . ELUND DO statements DONE
-
-    DONE            reduce using rule 24 (statement -> IF condition DO statements DONE ELDEF DO statements DONE .)
-    VAR             reduce using rule 24 (statement -> IF condition DO statements DONE ELDEF DO statements DONE .)
-    ID              reduce using rule 24 (statement -> IF condition DO statements DONE ELDEF DO statements DONE .)
-    FORWARD         reduce using rule 24 (statement -> IF condition DO statements DONE ELDEF DO statements DONE .)
-    IF              reduce using rule 24 (statement -> IF condition DO statements DONE ELDEF DO statements DONE .)
-    WHILE           reduce using rule 24 (statement -> IF condition DO statements DONE ELDEF DO statements DONE .)
-    RETURN          reduce using rule 24 (statement -> IF condition DO statements DONE ELDEF DO statements DONE .)
-    FINISH          reduce using rule 24 (statement -> IF condition DO statements DONE ELDEF DO statements DONE .)
-    ELUND           shift and go to state 81
-
+    statements                     shift and go to state 85
+    statement                      shift and go to state 18
 
 state 81
 
-    (25) statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND . DO statements DONE
+    (36) statement -> ID LBRACKET expression RBRACKET ASSIGN expression .
+    (17) expression -> expression . PLUS expression
+    (18) expression -> expression . MINUS expression
+    (19) expression -> expression . TIMES expression
+    (20) expression -> expression . DIVIDE expression
 
-    DO              shift and go to state 82
+    DONE            reduce using rule 36 (statement -> ID LBRACKET expression RBRACKET ASSIGN expression .)
+    VAR             reduce using rule 36 (statement -> ID LBRACKET expression RBRACKET ASSIGN expression .)
+    ID              reduce using rule 36 (statement -> ID LBRACKET expression RBRACKET ASSIGN expression .)
+    FORWARD         reduce using rule 36 (statement -> ID LBRACKET expression RBRACKET ASSIGN expression .)
+    IF              reduce using rule 36 (statement -> ID LBRACKET expression RBRACKET ASSIGN expression .)
+    WHILE           reduce using rule 36 (statement -> ID LBRACKET expression RBRACKET ASSIGN expression .)
+    RETURN          reduce using rule 36 (statement -> ID LBRACKET expression RBRACKET ASSIGN expression .)
+    FINISH          reduce using rule 36 (statement -> ID LBRACKET expression RBRACKET ASSIGN expression .)
+    PLUS            shift and go to state 51
+    MINUS           shift and go to state 52
+    TIMES           shift and go to state 53
+    DIVIDE          shift and go to state 54
 
 
 state 82
 
-    (25) statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO . statements DONE
-    (6) statements -> . statements statement
-    (7) statements -> . statement
-    (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (23) statement -> IF condition DO statements DONE if_else_chain .
 
-    VAR             shift and go to state 19
-    ID              shift and go to state 16
-    FORWARD         shift and go to state 20
-    IF              shift and go to state 21
-    WHILE           shift and go to state 22
-    RETURN          shift and go to state 23
+    DONE            reduce using rule 23 (statement -> IF condition DO statements DONE if_else_chain .)
+    VAR             reduce using rule 23 (statement -> IF condition DO statements DONE if_else_chain .)
+    ID              reduce using rule 23 (statement -> IF condition DO statements DONE if_else_chain .)
+    FORWARD         reduce using rule 23 (statement -> IF condition DO statements DONE if_else_chain .)
+    IF              reduce using rule 23 (statement -> IF condition DO statements DONE if_else_chain .)
+    WHILE           reduce using rule 23 (statement -> IF condition DO statements DONE if_else_chain .)
+    RETURN          reduce using rule 23 (statement -> IF condition DO statements DONE if_else_chain .)
+    FINISH          reduce using rule 23 (statement -> IF condition DO statements DONE if_else_chain .)
 
-    statements                     shift and go to state 83
-    statement                      shift and go to state 18
 
 state 83
 
-    (25) statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements . DONE
+    (25) if_else_chain -> ELUND . condition DO statements DONE if_else_chain
+    (27) condition -> . expression LT expression
+    (28) condition -> . expression GT expression
+    (29) condition -> . expression EQ expression
+    (10) expression -> . INF
+    (11) expression -> . NAN
+    (17) expression -> . expression PLUS expression
+    (18) expression -> . expression MINUS expression
+    (19) expression -> . expression TIMES expression
+    (20) expression -> . expression DIVIDE expression
+    (21) expression -> . MINUS expression
+    (22) expression -> . NUMBER
+    (32) expression -> . ID LPAREN expression RPAREN
+    (33) expression -> . ID LBRACKET expression RBRACKET
+    (34) expression -> . ID
+
+    INF             shift and go to state 34
+    NAN             shift and go to state 35
+    MINUS           shift and go to state 36
+    NUMBER          shift and go to state 37
+    ID              shift and go to state 38
+
+    condition                      shift and go to state 86
+    expression                     shift and go to state 33
+
+state 84
+
+    (26) if_else_chain -> ELDEF . DO statements DONE
+
+    DO              shift and go to state 87
+
+
+state 85
+
+    (31) statement -> WHILE condition DO statements FINISH statements . DONE
     (6) statements -> statements . statement
     (8) statement -> . VAR ID ASSIGN NUMBER
-    (9) statement -> . ID ASSIGN expression
-    (10) statement -> . ID LPAREN expression RPAREN ASSIGN expression
-    (11) statement -> . FORWARD NUMBER
-    (12) statement -> . VAR ID
-    (13) statement -> . VAR ID LPAREN NUMBER RPAREN
-    (23) statement -> . IF condition DO statements DONE
-    (24) statement -> . IF condition DO statements DONE ELDEF DO statements DONE
-    (25) statement -> . IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE
-    (29) statement -> . WHILE condition DO statements DONE
-    (30) statement -> . WHILE condition DO statements FINISH statements DONE
-    (32) statement -> . RETURN
-    (33) statement -> . RETURN expression
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
 
-    DONE            shift and go to state 84
+    DONE            shift and go to state 88
     VAR             shift and go to state 19
     ID              shift and go to state 16
     FORWARD         shift and go to state 20
@@ -1699,25 +1715,187 @@ state 83
     WHILE           shift and go to state 22
     RETURN          shift and go to state 23
 
-    statement                      shift and go to state 28
+    statement                      shift and go to state 29
 
-state 84
+state 86
 
-    (25) statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE .
+    (25) if_else_chain -> ELUND condition . DO statements DONE if_else_chain
 
-    DONE            reduce using rule 25 (statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE .)
-    VAR             reduce using rule 25 (statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE .)
-    ID              reduce using rule 25 (statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE .)
-    FORWARD         reduce using rule 25 (statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE .)
-    IF              reduce using rule 25 (statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE .)
-    WHILE           reduce using rule 25 (statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE .)
-    RETURN          reduce using rule 25 (statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE .)
-    FINISH          reduce using rule 25 (statement -> IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE .)
+    DO              shift and go to state 89
+
+
+state 87
+
+    (26) if_else_chain -> ELDEF DO . statements DONE
+    (6) statements -> . statements statement
+    (7) statements -> . statement
+    (8) statement -> . VAR ID ASSIGN NUMBER
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
+
+    VAR             shift and go to state 19
+    ID              shift and go to state 16
+    FORWARD         shift and go to state 20
+    IF              shift and go to state 21
+    WHILE           shift and go to state 22
+    RETURN          shift and go to state 23
+
+    statements                     shift and go to state 90
+    statement                      shift and go to state 18
+
+state 88
+
+    (31) statement -> WHILE condition DO statements FINISH statements DONE .
+
+    DONE            reduce using rule 31 (statement -> WHILE condition DO statements FINISH statements DONE .)
+    VAR             reduce using rule 31 (statement -> WHILE condition DO statements FINISH statements DONE .)
+    ID              reduce using rule 31 (statement -> WHILE condition DO statements FINISH statements DONE .)
+    FORWARD         reduce using rule 31 (statement -> WHILE condition DO statements FINISH statements DONE .)
+    IF              reduce using rule 31 (statement -> WHILE condition DO statements FINISH statements DONE .)
+    WHILE           reduce using rule 31 (statement -> WHILE condition DO statements FINISH statements DONE .)
+    RETURN          reduce using rule 31 (statement -> WHILE condition DO statements FINISH statements DONE .)
+    FINISH          reduce using rule 31 (statement -> WHILE condition DO statements FINISH statements DONE .)
+
+
+state 89
+
+    (25) if_else_chain -> ELUND condition DO . statements DONE if_else_chain
+    (6) statements -> . statements statement
+    (7) statements -> . statement
+    (8) statement -> . VAR ID ASSIGN NUMBER
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
+
+    VAR             shift and go to state 19
+    ID              shift and go to state 16
+    FORWARD         shift and go to state 20
+    IF              shift and go to state 21
+    WHILE           shift and go to state 22
+    RETURN          shift and go to state 23
+
+    statements                     shift and go to state 91
+    statement                      shift and go to state 18
+
+state 90
+
+    (26) if_else_chain -> ELDEF DO statements . DONE
+    (6) statements -> statements . statement
+    (8) statement -> . VAR ID ASSIGN NUMBER
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
+
+    DONE            shift and go to state 92
+    VAR             shift and go to state 19
+    ID              shift and go to state 16
+    FORWARD         shift and go to state 20
+    IF              shift and go to state 21
+    WHILE           shift and go to state 22
+    RETURN          shift and go to state 23
+
+    statement                      shift and go to state 29
+
+state 91
+
+    (25) if_else_chain -> ELUND condition DO statements . DONE if_else_chain
+    (6) statements -> statements . statement
+    (8) statement -> . VAR ID ASSIGN NUMBER
+    (9) statement -> . ID LPAREN expression RPAREN
+    (12) statement -> . FORWARD NUMBER
+    (13) statement -> . VAR ID
+    (14) statement -> . VAR ID LPAREN NUMBER RPAREN
+    (23) statement -> . IF condition DO statements DONE if_else_chain
+    (30) statement -> . WHILE condition DO statements DONE
+    (31) statement -> . WHILE condition DO statements FINISH statements DONE
+    (35) statement -> . ID ASSIGN expression
+    (36) statement -> . ID LBRACKET expression RBRACKET ASSIGN expression
+    (37) statement -> . RETURN
+    (38) statement -> . RETURN expression
+
+    DONE            shift and go to state 93
+    VAR             shift and go to state 19
+    ID              shift and go to state 16
+    FORWARD         shift and go to state 20
+    IF              shift and go to state 21
+    WHILE           shift and go to state 22
+    RETURN          shift and go to state 23
+
+    statement                      shift and go to state 29
+
+state 92
+
+    (26) if_else_chain -> ELDEF DO statements DONE .
+
+    DONE            reduce using rule 26 (if_else_chain -> ELDEF DO statements DONE .)
+    VAR             reduce using rule 26 (if_else_chain -> ELDEF DO statements DONE .)
+    ID              reduce using rule 26 (if_else_chain -> ELDEF DO statements DONE .)
+    FORWARD         reduce using rule 26 (if_else_chain -> ELDEF DO statements DONE .)
+    IF              reduce using rule 26 (if_else_chain -> ELDEF DO statements DONE .)
+    WHILE           reduce using rule 26 (if_else_chain -> ELDEF DO statements DONE .)
+    RETURN          reduce using rule 26 (if_else_chain -> ELDEF DO statements DONE .)
+    FINISH          reduce using rule 26 (if_else_chain -> ELDEF DO statements DONE .)
+
+
+state 93
+
+    (25) if_else_chain -> ELUND condition DO statements DONE . if_else_chain
+    (24) if_else_chain -> .
+    (25) if_else_chain -> . ELUND condition DO statements DONE if_else_chain
+    (26) if_else_chain -> . ELDEF DO statements DONE
+
+    DONE            reduce using rule 24 (if_else_chain -> .)
+    VAR             reduce using rule 24 (if_else_chain -> .)
+    ID              reduce using rule 24 (if_else_chain -> .)
+    FORWARD         reduce using rule 24 (if_else_chain -> .)
+    IF              reduce using rule 24 (if_else_chain -> .)
+    WHILE           reduce using rule 24 (if_else_chain -> .)
+    RETURN          reduce using rule 24 (if_else_chain -> .)
+    FINISH          reduce using rule 24 (if_else_chain -> .)
+    ELUND           shift and go to state 83
+    ELDEF           shift and go to state 84
+
+    if_else_chain                  shift and go to state 94
+
+state 94
+
+    (25) if_else_chain -> ELUND condition DO statements DONE if_else_chain .
+
+    DONE            reduce using rule 25 (if_else_chain -> ELUND condition DO statements DONE if_else_chain .)
+    VAR             reduce using rule 25 (if_else_chain -> ELUND condition DO statements DONE if_else_chain .)
+    ID              reduce using rule 25 (if_else_chain -> ELUND condition DO statements DONE if_else_chain .)
+    FORWARD         reduce using rule 25 (if_else_chain -> ELUND condition DO statements DONE if_else_chain .)
+    IF              reduce using rule 25 (if_else_chain -> ELUND condition DO statements DONE if_else_chain .)
+    WHILE           reduce using rule 25 (if_else_chain -> ELUND condition DO statements DONE if_else_chain .)
+    RETURN          reduce using rule 25 (if_else_chain -> ELUND condition DO statements DONE if_else_chain .)
+    FINISH          reduce using rule 25 (if_else_chain -> ELUND condition DO statements DONE if_else_chain .)
 
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
 WARNING: shift/reduce conflict for ID in state 23 resolved as shift
-WARNING: reduce/reduce conflict in state 71 resolved using rule (var_ref -> ID LPAREN expression RPAREN)
-WARNING: rejected rule (expression -> ID LPAREN expression RPAREN) in state 71
-WARNING: Rule (expression -> ID LPAREN expression RPAREN) is never reduced

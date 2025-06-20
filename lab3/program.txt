@@ -1,3 +1,49 @@
+function primer_arith(n) do
+    VAR a
+    a := 3 + 2 * 5
+    VAR b
+    b := a - 6
+done
+
+function primer_array(n) do
+    VAR arr(3)
+    arr[0] := 10
+    arr[1] := 20
+    arr[2] := arr[0] + arr[1]
+done
+
+function primer_while(n) do
+    VAR sum
+    sum := 0
+    VAR i
+    i := 1
+    while i < 5 do
+        sum := sum + i
+        i := i + 1
+    done
+done
+
+function primer_if(n) do
+    VAR a
+    a := 8
+    if a < 5 do
+        a := 100
+    done eldef do
+        a := 200
+    done
+done
+
+function primer_add1(n) do
+    return n + 1
+done
+
+function primer_add2(n) do
+    VAR a
+    a := 7
+    VAR res
+    res := primer_add1(a)
+done
+
 function fact(n) do
     if n < 2 do
         return 1
@@ -6,9 +52,72 @@ function fact(n) do
     done
 done
 
-main(x) do
+function primer_fact(n) do
     VAR a
     a := 5
     VAR res
-    res := fact(a) 
+    res := fact(a)
+done
+
+function fib(n) do
+    if n < 2 do
+        return n
+    done eldef do
+        return fib(n - 1) + fib(n - 2)
+    done
+done
+
+function primer_fib(n) do
+    VAR a
+    a := 8
+    VAR res
+    res := fib(a)
+done
+
+function fib_array(n) do
+    VAR n
+    n := 10
+    VAR arr(11)
+    VAR i
+    i := 0
+    while i < n + 1 do
+        arr[i] := fib(i)
+        i := i + 1
+    done
+done
+
+function nested_if(n) do
+    VAR a
+    a := 3
+    if a = 5 do
+        a := 100
+    done eldef do
+        if a < 5 do
+            a := 200
+        done eldef do
+            a := 300
+        done
+    done
+done
+
+
+function const(n) do
+    VAR inf
+    inf := INF
+    VAR nan
+    nan := NAN
+done
+
+main(x) do
+    primer_arith(0)
+    primer_array(0)
+    primer_while(0)
+    primer_if(0)
+    primer_add1(0)
+    primer_add2(0)
+    primer_fact(0)
+    primer_fib(0)
+    fib_array(0)
+    nested_if(0)
+    const(0)
 done

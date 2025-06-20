@@ -33,21 +33,30 @@ def p_statements(p):
     '''statements : statements statement
                   | statement'''
     if len(p) == 3:
-        p[0] = p[1] + [p[2]]
+        res = p[1] + [p[2]]
     else:
-        p[0] = [p[1]]
+        res = [p[1]]
+
+    for x in res:
+        if not isinstance(x, tuple):
+            print("WARNING: Non-tuple in statements:", x)
+    p[0] = res
 
 def p_statement_var(p):
     '''statement : VAR ID ASSIGN NUMBER'''
     p[0] = ('var_assign', p[2], p[4])
 
-def p_statement_assign(p):
-    '''statement : ID ASSIGN expression
-                 | ID LPAREN expression RPAREN ASSIGN expression'''
-    if len(p) == 4:
-        p[0] = ('assign', p[1], p[3])
-    else:
-        p[0] = ('assign_index', p[1], p[3], p[6])
+def p_statement_call(p):
+    'statement : ID LPAREN expression RPAREN'
+    p[0] = ('call', p[1], p[3])
+
+def p_expression_inf(p):
+    'expression : INF'
+    p[0] = float('inf')
+
+def p_expression_nan(p):
+    'expression : NAN'
+    p[0] = float('nan')
 
 def p_statement_forward(p):
     '''statement : FORWARD NUMBER'''
@@ -95,21 +104,24 @@ def p_expression_number(p):
     'expression : NUMBER'
     p[0] = p[1]
 
-def p_expression_var(p):
-    'expression : var_ref'
-    p[0] = p[1]
 
 
 def p_statement_if(p):
-    '''statement : IF condition DO statements DONE
-                 | IF condition DO statements DONE ELDEF DO statements DONE
-                 | IF condition DO statements DONE ELDEF DO statements DONE ELUND DO statements DONE'''
-    if len(p) == 6:
-        p[0] = ('if', p[2], p[4], None, None)
-    elif len(p) == 10:
-        p[0] = ('if', p[2], p[4], p[7], None)
-    elif len(p) == 14:
-        p[0] = ('if', p[2], p[4], p[7], p[11])
+    'statement : IF condition DO statements DONE if_else_chain'
+    p[0] = ('if', p[2], p[4], p[6])
+
+def p_if_else_chain_empty(p):
+    'if_else_chain : '
+    p[0] = []
+
+def p_if_else_chain_elif(p):
+    'if_else_chain : ELUND condition DO statements DONE if_else_chain'
+    p[0] = [('elif', p[2], p[4])] + p[6]
+
+def p_if_else_chain_else(p):
+    'if_else_chain : ELDEF DO statements DONE'
+    p[0] = [('else', p[3])]
+
 
 def p_condition(p):
     '''condition : expression LT expression
@@ -136,6 +148,27 @@ def p_expression_call(p):
     'expression : ID LPAREN expression RPAREN'
     p[0] = ('call_expr', p[1], p[3])
 
+
+def p_expression_array_index(p):
+    'expression : ID LBRACKET expression RBRACKET'
+    p[0] = ('var_ref_index', p[1], p[3])
+
+
+def p_expression_var(p):
+    'expression : ID'
+    p[0] = ('var_ref', p[1])
+
+
+
+def p_statement_assign(p):
+    '''statement : ID ASSIGN expression
+                 | ID LBRACKET expression RBRACKET ASSIGN expression'''
+    if len(p) == 4:
+        p[0] = ('assign', p[1], p[3])
+    else:
+        p[0] = ('assign_index', p[1], p[3], p[6])
+
+
 def p_statement_return(p):
     '''statement : RETURN
                  | RETURN expression'''
@@ -146,7 +179,7 @@ def p_statement_return(p):
 
 def p_error(p):
     if p:
-        print(f"Syntax error at {p.value!r}")
+        print(f"Syntax error at '{p.value}' (line {p.lineno})")
     else:
         print("Syntax error at EOF")
 

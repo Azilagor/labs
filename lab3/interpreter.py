@@ -37,7 +37,7 @@ def run_block(statements, env, robot, func_map, call_stack):
         elif stmt[0] == 'assign_index':
             var, idx_expr, value_expr = stmt[1], stmt[2], stmt[3]
             arr = env.get(var, [])
-            idx_val = eval_expr(idx_expr, env)
+            idx_val = eval_expr(idx_expr, env, func_map, call_stack, robot)
             value = eval_expr(value_expr, env, func_map, call_stack, robot)
             if not isinstance(arr, list):
                 arr = []
@@ -55,15 +55,28 @@ def run_block(statements, env, robot, func_map, call_stack):
         elif stmt[0] == 'if':
             cond = stmt[1]
             if_block = stmt[2]
-            eldef_block = stmt[3]
-            elund_block = stmt[4]
-            cond_val = eval_condition(cond, env, func_map, call_stack, robot)
-            if cond_val is True:
-                run_block(if_block, env, robot, func_map, call_stack)
-            elif cond_val is False and eldef_block:
-                run_block(eldef_block, env, robot, func_map, call_stack)
-            elif cond_val is None and elund_block:
-                run_block(elund_block, env, robot, func_map, call_stack)
+            else_chain = stmt[3]  
+            # основная ветка
+            if eval_condition(cond, env, func_map, call_stack, robot):
+                result = run_block(if_block, env, robot, func_map, call_stack)
+                if result is not None:
+                    return result
+            else:
+                for branch in else_chain:
+                    if branch[0] == 'elif':
+                        branch_cond = branch[1]
+                        branch_block = branch[2]
+                        if eval_condition(branch_cond, env, func_map, call_stack, robot):
+                            result = run_block(branch_block, env, robot, func_map, call_stack)
+                            if result is not None:
+                                return result
+                            break
+                    elif branch[0] == 'else':
+                        branch_block = branch[1]
+                        result = run_block(branch_block, env, robot, func_map, call_stack)
+                        if result is not None:
+                            return result
+                        break
         elif stmt[0] == 'while':
             cond = stmt[1]
             body = stmt[2]
