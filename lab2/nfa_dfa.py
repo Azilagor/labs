@@ -1,6 +1,7 @@
 from syntax_tree import SyntaxTree
 from collections import deque
 import copy
+import itertools
 
 class DFAState:
     def __init__(self, id_set: set, id_num: int, is_final: bool):
@@ -54,7 +55,7 @@ class DFA:
                 current.transitions[symbol] = self.state_map[frozen_u]
 
     def match(self, s: str) -> bool:
-        current = self.states[0]
+        current = self.start_state
         for c in s:
             if c not in current.transitions:
                 return False
@@ -80,83 +81,6 @@ class DFA:
         final_ids = [s.id for s in dfa.states if s.is_final]
         print(f"🏁 Финальные состояния: {', '.join(f'q{id}' for id in final_ids)}")
         print("-" * 40)
-
-
-    def to_regex(self):
-        states = self.states
-        n = len(states)
-
-        id2idx = {s.id: i for i, s in enumerate(states)}
-        idx2id = {i: s.id for i, s in enumerate(states)}
-
-        try:
-            start_id = self.start_state.id
-        except AttributeError:
-            start_id = states[0].id
-
-        start_idx = id2idx[start_id]
-        final_idxs = [i for i, s in enumerate(states) if s.is_final]
-        non_special = [i for i in range(n) if i != start_idx and i not in final_idxs]
-
-        # Заполняем матрицу R[i][j]: множество строк (рег. выражений)
-        R = [[set() for _ in range(n)] for _ in range(n)]
-        for i, s in enumerate(states):
-            for sym, t in s.transitions.items():
-                j = id2idx[t.id]
-                R[i][j].add(sym)
-
-        def regex_union(s):
-            s = {x for x in s if x}
-            if not s:
-                return ''
-            if len(s) == 1:
-                return next(iter(s))
-            return '|'.join(sorted(f"({x})" if '|' in x or len(x) > 1 else x for x in s))
-
-        def wrap(expr):
-            if not expr:
-                return ''
-            if '|' in expr or len(expr) > 1:
-                return f"({expr})"
-            return expr
-
-        # Удаление промежуточных состояний (алгоритм Ардена)
-        for k in non_special:
-            loop_k = regex_union(R[k][k])
-            loop_part = f"({loop_k})*" if loop_k else ""
-
-            for i in range(n):
-                if i == k:
-                    continue
-                path_ik = regex_union(R[i][k])
-                if not path_ik:
-                    continue
-                for j in range(n):
-                    if j == k:
-                        continue
-                    path_kj = regex_union(R[k][j])
-                    if not path_kj:
-                        continue
-
-                    mid = loop_part
-                    new_expr = wrap(path_ik) + mid + wrap(path_kj)
-                    R[i][j].add(new_expr)
-
-            # очищаем переходы, связанные с k
-            for row in R:
-                row[k] = set()
-            R[k] = [set() for _ in range(n)]
-
-        # Финальное выражение: объединение путей от start ко всем финальным
-        regexes = []
-        for f in final_idxs:
-            reg = regex_union(R[start_idx][f])
-            if reg:
-                regexes.append(reg)
-
-        return '|'.join(regexes) if regexes else ''
-
-
 
 def intersect(dfa1, dfa2):
     alphabet = dfa1.alphabet & dfa2.alphabet
@@ -205,6 +129,7 @@ def intersect(dfa1, dfa2):
     return dfa
 
 def complement(dfa):
+    dfa = copy.deepcopy(dfa)
     for state in dfa.states:
         state.is_final = not state.is_final
     return dfa
@@ -212,3 +137,140 @@ def complement(dfa):
 def difference(dfa1, dfa2):
     return intersect(dfa1, complement(dfa2))
 
+def dfa_to_regex(dfa) -> str:
+
+    # 1. Назначим индекс каждой вершине
+    states = dfa.states
+    id_to_index = {s.id: i for i, s in enumerate(states)}
+    index_to_state = {i: s for i, s in enumerate(states)}
+    n = len(states)
+
+    # 2. Матрица переходов R[i][j] = regex из i в j
+    R = [['' for _ in range(n)] for _ in range(n)]
+    for state in states:
+        i = id_to_index[state.id]
+        for symbol, dest in state.transitions.items():
+            j = id_to_index[dest.id]
+            if R[i][j]:
+                R[i][j] = f"({R[i][j]}|{symbol})"
+            else:
+                R[i][j] = symbol
+
+    # 3. Добавим новое стартовое и конечное состояние
+    start_index = n      # индекс нового старта
+    end_index = n + 1    # индекс нового конца
+    new_n = n + 2
+
+    # Новая пустая матрица размером (n+2) x (n+2)
+    new_R = [['' for _ in range(new_n)] for _ in range(new_n)]
+
+    # Копируем старую R внутрь новой
+    for i in range(n):
+        for j in range(n):
+            new_R[i + 1][j + 1] = R[i][j]
+
+    # ε-переход от нового старта в исходное стартовое состояние
+    real_start_index = id_to_index[dfa.start_state.id]
+    new_R[start_index][real_start_index + 1] = '$'  # обозначим ε как $
+
+    # ε-переходы из всех финальных состояний в новый конец
+    for i, state in enumerate(states):
+        if state.is_final:
+            new_R[i + 1][end_index] = '$'
+
+    # 4. Применим метод исключения состояний
+    # исключаем всё кроме start_index и end_index
+    for k in range(new_n):
+        if k == start_index or k == end_index:
+            continue
+        for i in range(new_n):
+            if i == k:
+                continue
+            for j in range(new_n):
+                if j == k:
+                    continue
+                A = new_R[i][j]
+                B = new_R[i][k]
+                C = new_R[k][k]
+                D = new_R[k][j]
+
+                if B and D:
+                    middle = f"{B}({C})*{D}" if C else f"{B}{D}"
+                    if A:
+                        new_R[i][j] = f"({A}|{middle})"
+                    else:
+                        new_R[i][j] = middle
+
+    # 5. Результат — из start → end
+    result = new_R[start_index][end_index]
+    return result
+
+
+def simplify_regex(regex: str) -> str:
+    def remove_outer_epsilon(r):
+        # Удаляем внешнее оборачивание в ($|...)
+        if r.startswith('($|') and r.endswith(')'):
+            return r[3:-1]
+        # Удаляем внешнее оборачивание в (...|$)
+        if r.startswith('(') and r.endswith('|$)'):
+            return r[1:-3]
+        return r
+
+    def remove_all_epsilon(r):
+        return ''.join(c for c in r if c != '$')
+
+    def collapse_double_parens(r):
+        # Убираем ((...)) -> (...)
+        i = 0
+        while i < len(r) - 3:
+            if r[i] == '(' and r[i+1] == '(':
+                j = i + 2
+                depth = 2
+                while j < len(r):
+                    if r[j] == '(':
+                        depth += 1
+                    elif r[j] == ')':
+                        depth -= 1
+                        if depth == 0 and r[j+1:j+2] == ')':
+                            # Заменяем ((...)) на (...)
+                            r = r[:i] + '(' + r[i+2:j] + ')' + r[j+2:]
+                            i = -1  # перезапустить сканирование
+                            break
+                    j += 1
+            i += 1
+        return r
+
+    def remove_useless_parens_before_star(r):
+        # Заменяет (a)* → a*
+        result = ''
+        i = 0
+        while i < len(r):
+            if r[i] == '(':
+                j = i + 1
+                depth = 1
+                while j < len(r):
+                    if r[j] == '(':
+                        depth += 1
+                    elif r[j] == ')':
+                        depth -= 1
+                        if depth == 0:
+                            break
+                    j += 1
+                if j + 1 < len(r) and r[j + 1] == '*':
+                    inner = r[i+1:j]
+                    result += inner + '*'
+                    i = j + 2
+                else:
+                    result += r[i:j+1]
+                    i = j + 1
+            else:
+                result += r[i]
+                i += 1
+        return result
+
+    regex = regex.strip()
+    regex = remove_outer_epsilon(regex)
+    regex = remove_all_epsilon(regex)
+    regex = collapse_double_parens(regex)
+    regex = remove_useless_parens_before_star(regex)
+    return regex

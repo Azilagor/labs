@@ -44,13 +44,15 @@ def t_NAN(t):
     return t
 
 def t_TRUE(t):
-    r'TRUE|T'
+    r'TRUE|1'
     t.value = True
     return t
+
 def t_FALSE(t):
-    r'FALSE|F'
+    r'FALSE|0'
     t.value = False
     return t
+
 def t_UNDEF(t):
     r'UNDEF|U'
     t.value = None  

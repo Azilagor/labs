@@ -1,81 +1,52 @@
 from regex_parser import tokenize, insert_concat, to_postfix
 from syntax_tree import SyntaxTree
-from nfa_dfa import DFA, DFAState
+from nfa_dfa import DFA, DFAState, dfa_to_regex, simplify_regex
 from dfa_min import DFAOptimizer
 from regex_engine import Regex
 
 
-pattern = "(a|bc)*|(a|bc)*ba(c)*"
+# Пример 1 — простая проверка
+r = Regex("(a|bc)*|(a|bc)*ba(c)*").compile()
+     
+restored = simplify_regex(dfa_to_regex(r.dfa))
+print("2. регулярка", restored)  
 
-tokens = tokenize(pattern)
-print("📥 Токены:", tokens)
+#print("Токены:", tokenize("(&.)*&a&b&b"))
+#r1 = Regex("(a|b)*abb").compile()
+# #r2 = Regex(".*abb").compile()  
 
-tokens_concat = insert_concat(tokens)
-print("➕ С конкатенацией:", tokens_concat)
-
-postfix = to_postfix(tokens_concat)
-print("📤 Постфикс:", postfix)
-
-tree = SyntaxTree(postfix)
-print("🌳 Дерево построено, root.label:", tree.root.label)
-
-
- 
-dfa = DFA(tree)
-
-dfa.print_dfa_console()
-
-
-regex = Regex("(a|bc)*|(a|bc)*ba(c)*").compile()
-
-print("🔁 restored 1:", regex.dfa.to_regex())
-
-# Для контроля — создаём DFA вручную и проверяем его
-tokens = to_postfix(insert_concat(tokenize("(a|bc)*|(a|bc)*ba(c)*")))
-tree = SyntaxTree(tokens)
-dfa = DFA(tree)  # без минимизации
-
-def test_restore():
-    pattern = "(a|bc)*|(a|bc)*ba(c)*"
+# r_inter = r1.intersect(r2)
+# print("3. Intersect match 'aabb':", r_inter.match("aabb"))  
+# print("4. Intersect match 'ab':", r_inter.match("ab"))      
 
 
 
-    # Ручной DFA (без оптимизации)
-    tokens = to_postfix(insert_concat(tokenize(pattern)))
-    tree = SyntaxTree(tokens)
-    dfa = DFA(tree)
-    dfa_opt = DFAOptimizer(dfa).minimize()
+# r1 = Regex("(a|b)*abb").compile()
+# r2 = Regex("a+abb").compile()
 
-    restored1 = dfa.to_regex()
-    print("✅ to_regex до минимизации:", restored1)
-
-    # После минимизации с переносом полей
-    minimized = DFAOptimizer(dfa).minimize()
-    minimized.alphabet = dfa.alphabet
-    minimized.leaves = dfa.leaves
-    minimized.terminal = dfa.terminal
-    minimized.followpos = dfa.followpos
-
-    restored2 = minimized.to_regex()
-    print("✅ to_regex после минимизации (вручную):", restored2)
-
-    # Через Regex.compile()
-    regex = Regex(pattern).compile()
-    restored3 = regex.dfa.to_regex()
-    print("✅ to_regex через Regex.compile:", restored3)
+# r_diff = r1.difference(r2)
+# print("5. Difference match 'abb':", r_diff.match("abb"))    
+# print("6. Difference match 'aaabb':", r_diff.match("aaabb")) 
 
 
-    dfa_opt.leaves = dfa.leaves
-    dfa_opt.followpos = dfa.followpos
-    dfa_opt.terminal = dfa.terminal
-    dfa_opt.alphabet = dfa.alphabet
 
-    print("✅ TO_REGEX (ручной DFA):", dfa_opt.to_regex())
-   
-    # Теперь через Regex.compile()
-    regex = Regex(pattern).compile()
-    print("✅ TO_REGEX (через regex.dfa):", regex.dfa.to_regex())
+# r = Regex("(a|bc)*").compile()
+# regex_restored = dfa_to_regex(r.dfa)
+# print("7. Восстановленное регулярное выражение:", regex_restored)
+
+# simplified = simplify_regex(regex_restored)
+# print("8. Упрощённое регулярное выражение:", simplified)
 
 
-if __name__ == "__main__":
-    test_restore()
+# r = Regex("a.{1,2}c").compile()
+# print("9. Match 'abc':", r.match("abc"))    
+# print("10. Match 'aXc':", r.match("aXc"))   
+# print("11. Match 'ac':", r.match("ac"))      
+
+
+# r = Regex("(<g>a(b|c)?d)").compile()
+# print("12. Match 'abd':", r.match("abd"))     
+# print("13. Match 'ad':", r.match("ad"))      
+# print("14. Match 'abcd':", r.match("abcd"))   
+
+

@@ -135,3 +135,67 @@ def complement(dfa):
 
 def difference(dfa1, dfa2):
     return intersect(dfa1, complement(dfa2))
+
+
+def to_regex(self):
+    states = self.states
+    n = len(states)
+
+    id2idx = {s.id: i for i, s in enumerate(states)}
+    try:
+        start_idx = id2idx[self.start_state.id]
+    except AttributeError:
+        start_idx = 0
+
+    final_idxs = [i for i, s in enumerate(states) if s.is_final]
+
+    # Инициализируем R[i][j][k]
+    R = [[[set() for _ in range(n+1)] for _ in range(n)] for _ in range(n)]
+
+    # Базовые переходы
+    for i, s in enumerate(states):
+        for sym, t in s.transitions.items():
+            j = id2idx[t.id]
+            R[i][j][0].add(sym)
+    for i in range(n):
+        R[i][i][0].add('$')  # ε на диагонали
+
+    def regex_union(s):
+        s = {x for x in s if x}
+        if not s:
+            return ''
+        if len(s) == 1:
+            return next(iter(s))
+        return '|'.join(sorted(f"({x})" if '|' in x or len(x) > 1 else x for x in s))
+
+    def wrap(x):
+        if not x or x == '$':
+            return ''
+        if '|' in x or len(x) > 1:
+            return f'({x})'
+        return x
+
+    # Алгоритм восстановления (аналог алгоритма Элгота-Макнота)
+    for k in range(1, n+1):
+        for i in range(n):
+            for j in range(n):
+                prev = R[i][j][k-1]
+                left = R[i][k-1][k-1]
+                loop = R[k-1][k-1][k-1]
+                right = R[k-1][j][k-1]
+
+                # left . (loop)* . right
+                loop_part = wrap(regex_union(loop))
+                if loop_part:
+                    loop_part = f"{loop_part}*"
+                concat_part = wrap(regex_union(left)) + loop_part + wrap(regex_union(right))
+
+                R[i][j][k] = prev | {concat_part} if concat_part else prev
+
+    # Все пути из стартового в финальные
+    result_exprs = set()
+    for f in final_idxs:
+        result_exprs |= R[start_idx][f][n]
+
+    return regex_union(result_exprs).replace('$', '')
+

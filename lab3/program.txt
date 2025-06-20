@@ -122,6 +122,9 @@ function const(n) do
     nan := NAN*2
 done
 
+
+
+
 main(x) do
     primer_arith(0)
     primer_array(0)
@@ -135,4 +138,5 @@ main(x) do
     fib_array(0)
     nested_if(0)
     const(0)
+
 done

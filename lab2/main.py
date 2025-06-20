@@ -1,7 +1,6 @@
 from regex_engine import Regex
-from nfa_dfa import DFA
-
-
+from nfa_dfa import DFA, dfa_to_regex, simplify_regex
+import re
 
 def print_menu():
     print("\n=== Регулярное выражение: Меню ===")
@@ -26,9 +25,9 @@ def main():
             try:
                 regex = Regex(pattern).compile()
                 print("\n DFA построен:")
-                regex.dfa.print_dfa_console()
+                #regex.dfa.print_dfa_console()
 
-                restored = regex.dfa.to_regex()
+                restored = simplify_regex(dfa_to_regex(regex))
                 print("\n Восстановленная регулярка по автомату:", restored)
             except Exception as e:
                 print(" Ошибка компиляции:", e)
@@ -61,7 +60,7 @@ def main():
             try:
                 other = Regex(pattern2).compile()
                 regex = regex.difference(other)
-                print("✅ Разность выполнена. Используется новое выражение.")
+                print(" Разность выполнена. Используется новое выражение.")
             except Exception as e:
                 print(" Ошибка разности:", e)
 
@@ -69,13 +68,13 @@ def main():
             if not regex:
                 print(" Сначала скомпилируйте выражение.")
                 continue
-            print("\n Восстановленная регулярка:", regex.dfa.to_regex())
+            print("\n Восстановленная регулярка:", simplify_regex(dfa_to_regex(regex.dfa)))
 
         elif choice == "6":
             if not regex or regex.pattern is None:
                 print(" Нельзя сравнить — нет оригинала.")
                 continue
-            restored = regex.dfa.to_regex()
+            restored = simplify_regex(dfa_to_regex(regex.dfa))
             pattern = regex.pattern
             print(f"\nОригинал:      {pattern}")
             print(f"Восстановлено: {restored}")

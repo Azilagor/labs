@@ -95,6 +95,18 @@ def p_expression_binop(p):
     elif p[2] == '/':
         p[0] = ('div', p[1], p[3])
 
+
+def p_expression_bool(p):
+    '''expression : TRUE
+                  | FALSE
+                  | UNDEF'''
+    if p[1] == 'TRUE':
+        p[0] = True
+    elif p[1] == 'FALSE':
+        p[0] = False
+    else:
+        p[0] = None  
+
 def p_expression_uminus(p):
     'expression : MINUS expression %prec UMINUS'
     p[0] = ('uminus', p[2])

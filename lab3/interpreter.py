@@ -61,7 +61,7 @@ def run_block(statements, env, robot, func_map, call_stack):
             if_block = stmt[2]
             else_chain = stmt[3]  
             # основная ветка
-            if eval_condition(cond, env, func_map, call_stack, robot):
+            if to_bool(eval_condition(cond, env, func_map, call_stack, robot)):
                 result = run_block(if_block, env, robot, func_map, call_stack)
                 if result is not None:
                     return result
@@ -210,3 +210,20 @@ def int_to_cell(value):
     if value != value:  # nan check
         return 'UNDEF'
     return {'type': 'BOX', 'weight': value}
+
+
+def to_bool(val):
+    if val is None:
+        return 'UNDEF'
+    if isinstance(val, bool):
+        return val
+    if isinstance(val, (int, float)):
+        return val != 0
+    return bool(val)
+
+def to_int(val):
+    if val is None:
+        return 'UNDEF'
+    if isinstance(val, bool):
+        return int(val)
+    return int(val)
